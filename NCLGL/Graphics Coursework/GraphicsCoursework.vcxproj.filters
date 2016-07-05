@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="GLSL Shaders">
+      <UniqueIdentifier>{54aef76f-96b2-40b1-9925-42f14cff1495}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL Shaders\HM_Shaders">
+      <UniqueIdentifier>{0506f51a-5b6e-4ac8-a2f5-710135929dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL Shaders\PB_Shader">
+      <UniqueIdentifier>{bcaac6d0-f4d5-4465-914c-ea5e7cd93687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL Shaders\SB_Shader">
+      <UniqueIdentifier>{b2a94898-8d13-4946-8165-7ff49e3f20dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL Shaders\Reflection Shader">
+      <UniqueIdentifier>{9ecb9f26-cec7-4e74-a042-888139d4f412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL Shaders\DFR_Light">
+      <UniqueIdentifier>{0be0e7b3-c16b-4675-8a14-e7faf1636d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL Shaders\Combine_Shader">
+      <UniqueIdentifier>{0be4a5b4-cdc2-4497-a0ff-deacca5acd28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLSL Shaders\Basic_Shaders">
+      <UniqueIdentifier>{34a17550-45c3-4fa0-9139-f7547648fad3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PoliceBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HeightMapNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBoxNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LakeNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DemoScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PoliceBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeightMapNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBoxNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LakeNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DemoScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\PB_frag_shader.glsl">
+      <Filter>GLSL Shaders\PB_Shader</Filter>
+    </None>
+    <None Include="..\Shaders\SB_vertex_shader.glsl">
+      <Filter>GLSL Shaders\SB_Shader</Filter>
+    </None>
+    <None Include="..\Shaders\PB_vert_shader.glsl">
+      <Filter>GLSL Shaders\PB_Shader</Filter>
+    </None>
+    <None Include="..\Shaders\HM_frag_shader.glsl">
+      <Filter>GLSL Shaders\HM_Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\reflect_frag_shader.glsl">
+      <Filter>GLSL Shaders\Reflection Shader</Filter>
+    </None>
+    <None Include="..\Shaders\SB_frag_shader.glsl">
+      <Filter>GLSL Shaders\SB_Shader</Filter>
+    </None>
+    <None Include="..\Shaders\reflect_vert_shader.glsl">
+      <Filter>GLSL Shaders\Reflection Shader</Filter>
+    </None>
+    <None Include="..\Shaders\HM_vert_shader.glsl">
+      <Filter>GLSL Shaders\HM_Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\combine_frag_shader.glsl">
+      <Filter>GLSL Shaders\Combine_Shader</Filter>
+    </None>
+    <None Include="..\Shaders\combine_vert_shader.glsl">
+      <Filter>GLSL Shaders\Combine_Shader</Filter>
+    </None>
+    <None Include="..\Shaders\HM_TES_shader.glsl">
+      <Filter>GLSL Shaders\HM_Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\HM_TCS_shader.glsl">
+      <Filter>GLSL Shaders\HM_Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\DFR_frag_shader.glsl">
+      <Filter>GLSL Shaders\DFR_Light</Filter>
+    </None>
+    <None Include="..\Shaders\DFR_vert_shader.glsl">
+      <Filter>GLSL Shaders\DFR_Light</Filter>
+    </None>
+    <None Include="..\Shaders\reflect_TCS_shader.glsl">
+      <Filter>GLSL Shaders\Reflection Shader</Filter>
+    </None>
+    <None Include="..\Shaders\reflect_TES_shader.glsl">
+      <Filter>GLSL Shaders\Reflection Shader</Filter>
+    </None>
+    <None Include="..\Shaders\fragment_shader.glsl">
+      <Filter>GLSL Shaders\Basic_Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\vertex_shader.glsl">
+      <Filter>GLSL Shaders\Basic_Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

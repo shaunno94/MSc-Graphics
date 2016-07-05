@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{909A2CFC-6E55-4776-8B60-93B44103A9CF}</ProjectGuid>
+    <RootNamespace>Coursework</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\GLEW\include;..\SOIL;..\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GLEW\lib;..\SOIL\$(Configuration);..\Graphics For Games\$(Configuration);..\nclGL_Lib\$(Configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>..\GLEW\include;..\SOIL;..\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\GLEW\lib;..\SOIL\$(Configuration);..\Graphics For Games\$(Configuration);..\nclGL_Lib\$(Configuration);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="DemoScene.h" />
+    <ClInclude Include="EnvLight.h" />
+    <ClInclude Include="HeightMapNode.h" />
+    <ClInclude Include="LakeNode.h" />
+    <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="PoliceBox.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SkyBoxNode.h" />
+    <ClInclude Include="UI.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DemoScene.cpp" />
+    <ClCompile Include="EnvLight.cpp" />
+    <ClCompile Include="HeightMapNode.cpp" />
+    <ClCompile Include="LakeNode.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="PoliceBox.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="SkyBoxNode.cpp" />
+    <ClCompile Include="UI.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Shaders\combine_frag_shader.glsl" />
+    <None Include="..\Shaders\combine_vert_shader.glsl" />
+    <None Include="..\Shaders\DFR_frag_shader.glsl" />
+    <None Include="..\Shaders\DFR_vert_shader.glsl" />
+    <None Include="..\Shaders\fragment_shader.glsl" />
+    <None Include="..\Shaders\HM_frag_shader.glsl" />
+    <None Include="..\Shaders\HM_TCS_shader.glsl" />
+    <None Include="..\Shaders\HM_TES_shader.glsl" />
+    <None Include="..\Shaders\HM_vert_shader.glsl" />
+    <None Include="..\Shaders\PB_frag_shader.glsl">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="..\Shaders\PB_vert_shader.glsl" />
+    <None Include="..\Shaders\reflect_frag_shader.glsl" />
+    <None Include="..\Shaders\reflect_TCS_shader.glsl" />
+    <None Include="..\Shaders\reflect_TES_shader.glsl" />
+    <None Include="..\Shaders\reflect_vert_shader.glsl" />
+    <None Include="..\Shaders\SB_frag_shader.glsl" />
+    <None Include="..\Shaders\SB_vertex_shader.glsl" />
+    <None Include="..\Shaders\vertex_shader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\nclgl\nclgl.vcxproj">
+      <Project>{98d6b51b-cb0a-4389-adc6-24082b967c3f}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
