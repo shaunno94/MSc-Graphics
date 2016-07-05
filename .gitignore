@@ -29,3 +29,6 @@
 *.app
 
 !NCLGL/Meshes
+NCLGL/Graphics Coursework/GraphicsCoursework.opensdf
+NCLGL/Graphics Coursework/GraphicsCoursework.sdf
+NCLGL/Graphics Coursework/GraphicsCoursework.v12.suo
