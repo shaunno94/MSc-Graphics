@@ -1,6 +1,4 @@
-#include "PoliceBox.h"
 #include "HeightMapNode.h"
-#include "SkyBoxNode.h"
 #include "LakeNode.h"
 #include "EnvLight.h"
 #include "ParticleEmitter.h"
@@ -21,16 +19,6 @@ DemoScene::DemoScene()
 	heightmap_shader_index = AddShaderProgram(new Shader(File_Locs::SHADER_DIR + "HM_vert_shader.glsl", File_Locs::SHADER_DIR + "HM_frag_shader.glsl",
 		File_Locs::SHADER_DIR + "HM_TCS_shader.glsl", File_Locs::SHADER_DIR + "HM_TES_shader.glsl"));
 
-	PoliceBox::CreateBoxInstance();
-	heightmap_index = AddSceneObject(new HeightMapNode(sceneShaderProgs[heightmap_shader_index], sceneCamera, heightMap_center));
-	policeBox_index = AddSceneObject(new PoliceBox(sceneShaderProgs[policeBox_shader_index], pb_light, heightMap_center, false));
-	skybox_index = AddSceneObject(new SkyBoxNode(sceneShaderProgs[skybox_shader_index]));
-	envLight_index = AddSceneObject(new EnvLight(sceneShaderProgs[envLight_shader_index], heightMap_center));
-	AddSceneObject(new LakeNode(sceneShaderProgs[lake_shader_index], heightMap_center, sceneCamera, sceneObjects[skybox_index]->getTextureID(), 
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->getEnvLight()));
-
-	sceneCamera->SetPosition(Vector3(heightMap_center.x, 1500.0f, heightMap_center.z));
-
 	lightVol = new OBJMesh();
 
 	if (!lightVol->LoadOBJMesh((File_Locs::MESH_DIR + ("ico.obj")).c_str()))
@@ -40,9 +28,21 @@ DemoScene::DemoScene()
 		exit(1);
 	}
 
-	sceneObjects[heightmap_index]->IsShadowCaster(true);
-	sceneObjects[policeBox_index]->IsShadowCaster(true);
-	sceneObjects[envLight_index]->IsDirectionalLight(true);
+	PoliceBox::CreateBoxInstance();
+	skybox_index = AddSceneObject(new SkyBoxNode(sceneShaderProgs[skybox_shader_index]));
+	heightmap_index = AddSceneObject(new HeightMapNode(sceneShaderProgs[heightmap_shader_index], heightMap_center));
+	envLight_index = AddSceneObject(new EnvLight(sceneShaderProgs[envLight_shader_index], heightMap_center), true);
+	AddSceneObject(new LakeNode(sceneShaderProgs[lake_shader_index], heightMap_center, sceneCamera, sceneObjects[skybox_index]->getTextureID(),
+		static_cast<EnvLight*>(sceneObjects[envLight_index])->getEnvLight()));
+	policeBox_index = AddSceneObject(new PoliceBox(sceneShaderProgs[policeBox_shader_index], pb_light, lightVol, heightMap_center, false));
+
+	sceneCamera->SetPosition(Vector3(heightMap_center.x, 1500.0f, heightMap_center.z));
+
+	sceneObjects[heightmap_index]->SetShadowCaster(true);
+	//sceneObjects[policeBox_index]->SetShadowCaster(true);
+	sceneObjects[envLight_index]->SetDirectionalLight(true);
+
+	shadowPersp = Matrix4::Perspective(100.0f, 15000.0f, 1.0f, 45.0f);
 
 	InitialiseLights();
 }
@@ -81,20 +81,31 @@ void DemoScene::UpdateScene(float msec)
 	Scene::UpdateScene(msec);
 }
 
-void DemoScene::DrawScene(bool shadowPass)
+void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 {	
 	if (shadowPass)
 	{
-		SceneNode::context->UpdateViewMatrix(Matrix4::Translation(Vector3(0, 0, -10000)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
+		SceneNode::context->UpdateProjMatrix(shadowPersp);
+
+		lightVM = Matrix4::Translation(Vector3(0, 0, -10000)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
 			Matrix4::Rotation(sceneLightRot, Vector3(0, 1, 0)) *
 			Matrix4::BuildViewMatrix(Vector3(0, 1, 0), Vector3(0, 0, 0), Vector3(0, 0, 1)) *
-			Matrix4::Translation(Vector3(-heightMap_center.x, 0, -heightMap_center.z)));
-		
+			Matrix4::Translation(Vector3(-heightMap_center.x, 0, -heightMap_center.z));
+
+		SceneNode::context->UpdateViewMatrix(lightVM);
+
 		static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(viewMatrix).GetPositionVector());
 		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (SceneNode::context->GetProjMat() * viewMatrix * static_cast<HeightMapNode*>(sceneObjects[heightmap_index])->getHM_ModelMatrix()));
+		SceneNode::context->SwitchToPerspective();
+		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowProjView(SceneNode::context->GetProjMat() * viewMatrix);
 	}
 
-	Scene::DrawScene(shadowPass);
+	Scene::DrawScene(shadowPass, lightPass);
+
+	if (shadowPass && !viewLight)
+	{
+		SceneNode::context->UpdateViewMatrix(viewMatrix);
+	}
 }
 
 void DemoScene::LateDraw()

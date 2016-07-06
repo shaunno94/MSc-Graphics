@@ -1,14 +1,9 @@
 #include "HeightMapNode.h"
 
-HeightMapNode::HeightMapNode(Shader* shader, Camera* cam, Vector3& hm_center)
-	: SceneNode(new HeightMap((File_Locs::TEXTURE_DIR + ("Heightmap.jpg")).c_str(), 
-		(File_Locs::TEXTURE_DIR + ("Heights_NRM.jpg")).c_str(),
-		SCALE, (File_Locs::TEXTURE_DIR + ("rockyTex.jpg")).c_str(), 
-		(File_Locs::TEXTURE_DIR + ("Heightmap_NRM.jpg")).c_str()), 
-		Vector4(1, 1, 1, 1), shader, true)
+HeightMapNode::HeightMapNode(Shader* shader, Vector3& hm_center)
 {
-	/*mesh = new HeightMap((File_Locs::TEXTURE_DIR + ("Heightmap.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heights_NRM.jpg")).c_str(),
-		SCALE, (File_Locs::TEXTURE_DIR + ("rockyTex.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heightmap_NRM.jpg")).c_str());*/
+	mesh = new HeightMap((File_Locs::TEXTURE_DIR + "Heightmap.jpg").c_str(), (File_Locs::TEXTURE_DIR + "Heights_NRM.jpg").c_str(),
+		SCALE, (File_Locs::TEXTURE_DIR + "rockyTex.jpg").c_str(), (File_Locs::TEXTURE_DIR + "Heightmap_NRM.jpg").c_str());
 	
 	if (!mesh->GetTexture() || !mesh->getBumpMap())
 	{
@@ -20,26 +15,14 @@ HeightMapNode::HeightMapNode(Shader* shader, Camera* cam, Vector3& hm_center)
 	OGLRenderer::SetTextureFiltering(mesh->GetTexture(), true, true);
 	OGLRenderer::SetTextureRepeating(mesh->GetTexture(), true);
 
-	camera = cam;
-
 	hm_center = static_cast<HeightMap*>(mesh)->getCenter();
-
-	/*nodeShader = new Shader(File_Locs::SHADER_DIR + "HM_vert_shader.glsl", File_Locs::SHADER_DIR + "HM_frag_shader.glsl", 
-		File_Locs::SHADER_DIR + "HM_TCS_shader.glsl", File_Locs::SHADER_DIR + "HM_TES_shader.glsl");
-
-	if (!nodeShader->LinkProgram())
-	{
-		cout << "Initialisation failed...Heightmap shader program failed to compile." << endl;
-		system("pause");
-		exit(1);
-	}*/
-
-	//nodeShader = shader;
+	
+	nodeShader = shader;
+	deleteMesh = true;
 
 	heightMapTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "rockTex");
 	heights_loc = glGetUniformLocation(nodeShader->GetProgram(), "heights");
 	modelMat_loc = glGetUniformLocation(nodeShader->GetProgram(), "modelMatrix");
-	cameraPos_loc = glGetUniformLocation(nodeShader->GetProgram(), "cameraPos");
 	snowTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "snowTex");
 	grassTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "grassTex");
 	bump_loc = glGetUniformLocation(nodeShader->GetProgram(), "bumpTex");
@@ -77,7 +60,6 @@ void HeightMapNode::DrawNode(bool shadowPass)
 		glUniform1i(snowTex_loc, 10);
 		glUniform1i(grassTex_loc, 11);
 		glUniform1i(heights_nrm_loc, 12);
-		glUniform3fv(cameraPos_loc, 1, (float*)&camera->GetPosition());
 		context->UpdateModelMatrix(mesh->getModelMatrix());
 		context->UpdateShaderMatrices();
 		mesh->Draw();

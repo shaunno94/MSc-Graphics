@@ -2,7 +2,6 @@
 unsigned int Renderer::bytes_used = 0;
 Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 {
-	//sceneNodes.resize(TOTAL_NODES);
 	shaderProgs.resize(TOTAL_SHADERS);
 	fbo.resize(TOTAL_FBO);
 	fbo_tex.resize(TOTAL_TEX);
@@ -26,26 +25,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 		}
 	}
 	
-	//camera = new Camera();
-
-	/*PoliceBox::CreateBoxInstance();
-	sceneNodes[HEIGHTMAP] = new HeightMapNode(camera, heightMap_center);
-	//heightMap_center = static_cast<HeightMapNode*>(sceneNodes[HEIGHTMAP])->getHMCenter();
-	sceneNodes[PB] = new PoliceBox(pb_light, heightMap_center, false);
-	sceneNodes[SKYBOX] = new SkyBoxNode();
-	sceneNodes[ENV_LIGHT] = new EnvLight(shaderProgs[LIGHT_SHADER], heightMap_center);
-	sceneNodes[LAKE] = new LakeNode(heightMap_center, camera, sceneNodes[SKYBOX]->getTextureID(), static_cast<EnvLight*>(sceneNodes[ENV_LIGHT])->getEnvLight());*/
 	screenQuad = Mesh::GenerateQuad();
-	//camera->SetPosition(Vector3(heightMap_center.x, 1500.0f, heightMap_center.z));
-
-	//lightVol = new OBJMesh();
-
-	/*if (!lightVol->LoadOBJMesh((File_Locs::MESH_DIR + ("ico.obj")).c_str()))
-	{
-		cout << "Initialisation failed...Light volume obj could not be loaded." << endl;
-		system("pause");
-		exit(1);
-	}*/
 
 	emitter = new ParticleEmitter();
 	glEnable(GL_DEPTH_TEST);
@@ -93,7 +73,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 		system("pause");
 		exit(1);
 	}
-	
+
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[POINT_LIGHT_FBO]);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[LIGHT_EMISSIVE_TEX], 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, fbo_tex[LIGHT_SPECULAR_TEX], 0);
@@ -129,18 +109,18 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 	pixSize = Vector2(1.0f / float(width), 1.0f / float(height));
 	HUD = new UI(width, height, bytes_used, pixSize, shaderProgs[BASIC_SHADER]);
 	ambientLight = 0.25f;
+
 	init = true;
 }
 Renderer::~Renderer()
 {
-	//delete camera;
 	delete screenQuad;
 	delete emitter;
 	emitter = nullptr;
-	//camera = nullptr;
 	screenQuad = nullptr; 	
 
 	unsigned int i;
@@ -150,47 +130,10 @@ Renderer::~Renderer()
 		shaderProgs[i] = nullptr;
 	}
 
-	/*for (i = 0; i < TOTAL_NODES; ++i)
-	{
-		if (sceneNodes[i])
-		{
-			delete sceneNodes[i];
-			sceneNodes[i] = nullptr;
-		}
-	}*/
-
-/*	for (i = 0; i < pointLights.size(); ++i)
-	{
-		delete pointLights[i];
-		pointLights[i] = nullptr;
-	}*/
-
-	//PoliceBox::DeleteBoxInstance();
 	currentShader = nullptr;
 	glDeleteFramebuffers(TOTAL_FBO, fbo.data());
 	glDeleteTextures(TOTAL_TEX, fbo_tex.data());
 }
-
-/*void Renderer::initLights()
-{
-	for (unsigned int x = 0; x < LIGHTNUM; ++x)
-	{
-		for (unsigned int z = 0; z < LIGHTNUM; ++z)
-		{
-			float xPos = (heightMap_center.x / float(LIGHTNUM - 1)) * x;
-			float zPos = (heightMap_center.z / float(LIGHTNUM - 1)) * z;
-			
-			float r = 0.5f + (float)(rand() % 129) / 128.0f;
-			float g = 0.5f + (float)(rand() % 129) / 128.0f;
-			float b = 0.5f + (float)(rand() % 129) / 128.0f;
-
-			float radius = heightMap_center.x / float(LIGHTNUM);
-			pointLights.push_back(new Light(Vector3(xPos, 850.0f, zPos), 
-				Vector3(heightMap_center.x, 0.0f, heightMap_center.z), Vector4(r, g, b, 1.0f), radius, false, 0.5));
-		}
-	}
-	pointLights.push_back(pb_light);
-}*/
 
 void Renderer::GenerateTexture(GLuint& target, bool depth, bool shadow, bool clamp)
 {
@@ -237,12 +180,11 @@ void Renderer::GenerateShadowFBO(GLuint FBO, GLuint target)
 
 void Renderer::RenderScene(float msec)
 {
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	if (currentScene)
 	{
 		prevView = (projMatrix * viewMatrix);
-
-		UpdateScene(msec);
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		UpdateScene(msec);	
 
 		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 		FillBuffers();
@@ -250,39 +192,27 @@ void Renderer::RenderScene(float msec)
 		DrawLights();
 		DrawCombinedScene();
 		DrawPostProcess();
+	}		
 
-		glUseProgram(0);
-	}
+	glUseProgram(0);
 	SwapBuffers();
 }
 
 void Renderer::UpdateScene(float msec)
 {
 	currentScene->UpdateScene(msec);
-
-	//camera->UpdateCamera(msec);
-	//viewMatrix = camera->BuildViewMatrix();
 	emitter->Update(msec);
 	HUD->Update(msec);
-	//sceneNodes[PB]->Update(msec);
-	//sceneNodes[LAKE]->Update(msec);
 }
 
 void Renderer::FillBuffers()
 {
-	//DrawShadowScene();
+	DrawShadowScene();
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[BUFFER_FBO]);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	//viewMatrix = camera->BuildViewMatrix();
-	/*if (viewLight)
-	{
-		viewMatrix = lightVM;
-	}*/
+
 	currentScene->DrawScene(false);
-	//sceneNodes[SKYBOX]->DrawNode();	
-	//sceneNodes[HEIGHTMAP]->DrawNode();
-	//sceneNodes[LAKE]->DrawNode();
-	//sceneNodes[PB]->DrawNode();
+
 	if (!blur)
 	{
 		emitter->Draw();
@@ -316,7 +246,7 @@ void Renderer::DrawLights()
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[IRRADIANCE_TEX]);
 	
 	DrawPointLights();
-	//sceneNodes[ENV_LIGHT]->DrawNode();
+	currentScene->DrawScene(false, true);
 		
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -352,7 +282,6 @@ void Renderer::DrawPointLights()
 		}
 		SetShaderLight(l);
 		UpdateShaderMatrices();
-		//lightVol->Draw();
 		l->Draw();
 	}
 }
@@ -365,7 +294,10 @@ void Renderer::DrawShadowScene()
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	projMatrix = Matrix4::Perspective(100.0f, 15000.0f, 1.0f, 45.0f);
+	//SetCurrentShader(shaderProgs[BASIC_SHADER]);
+	//glUniform1i(glGetUniformLocation(shaderProgs[BASIC_SHADER]->GetProgram(), "font"), 0);
+
+	//projMatrix = Matrix4::Perspective(100.0f, 15000.0f, 1.0f, 45.0f);
 
 	/*viewMatrix = Matrix4::Translation(Vector3(0, 0, -10000)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
 		Matrix4::Rotation(sceneLightRot, Vector3(0, 1, 0)) *
@@ -378,8 +310,10 @@ void Renderer::DrawShadowScene()
 
 	//sceneNodes[HEIGHTMAP]->DrawNode(true);
 	//DrawPBShadows();
+
 	currentScene->DrawScene(true);
-	SwitchToPerspective();
+
+	//SwitchToPerspective();
 	//static_cast<EnvLight*>(sceneNodes[ENV_LIGHT])->setShadowProjView(projMatrix * camera->BuildViewMatrix());
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -483,8 +417,8 @@ void Renderer::DrawPostProcess()
 		
 	screenQuad->Draw();
 
-	//HUD->Draw();
-	currentScene->LateDraw();
+	HUD->Draw();
+	//currentScene->LateDraw();
 	SwitchToPerspective();
 	glUseProgram(0);
 }

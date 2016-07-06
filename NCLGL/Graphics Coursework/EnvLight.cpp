@@ -3,8 +3,6 @@
 EnvLight::EnvLight(Shader* shader, Vector3 pos)
 	: SceneNode(Mesh::GenerateQuad(), Vector4(1, 1, 1, 1), shader, true)
 {
-	//mesh = Mesh::GenerateQuad();
-	//nodeShader = shader;
 	dirLight = new Light(Vector3(pos.x, 0.0f, pos.z), Vector3(pos.x, 1000.0f, pos.z), lightCol, 1.0f, false, 1.0f, nullptr);
 	lightRot = 0.0f;
 
@@ -16,12 +14,12 @@ EnvLight::EnvLight(Shader* shader, Vector3 pos)
 EnvLight::~EnvLight()
 {
 	delete dirLight;
+	dirLight = nullptr;
 }
 
 void EnvLight::DrawNode(bool shadowPass)
 {
 	glDisable(GL_CULL_FACE);
-
 	context->SwitchToOrtho();
 
 	glUniform1i(dir_loc, 1);
@@ -37,4 +35,6 @@ void EnvLight::DrawNode(bool shadowPass)
 }
 
 void EnvLight::Update(float msec)
-{}
+{
+
+}

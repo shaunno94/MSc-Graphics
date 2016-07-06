@@ -1,4 +1,6 @@
 #include <nclgl\Scene.h>
+#include "PoliceBox.h"
+#include "SkyBoxNode.h"
 
 class DemoScene : public Scene
 {
@@ -7,11 +9,12 @@ public:
 	virtual ~DemoScene();
 
 	virtual void UpdateScene(float msec) override;
-	virtual void DrawScene(bool shadowPass) override;
+	virtual void DrawScene(bool shadowPass, bool lightPass = false) override;
 	virtual void LateDraw() override;
 
 	inline void SetPosition(Vector3& p) { static_cast<PoliceBox*>(sceneObjects[policeBox_index])->updatePos(p); }
 	inline Vector3 getStartingPoint() { return sceneObjects[policeBox_index]->GetTransform().GetPositionVector(); }
+	inline void SwitchViewPoint() { viewLight = !viewLight; }
 
 	inline void incDirLight() {
 		sceneLightRot += 2.0f;
@@ -36,6 +39,10 @@ private:
 	OBJMesh* lightVol; 
 	Vector3 heightMap_center;
 	float sceneLightRot = 0.0f;
+
+	Matrix4 lightVM;
+	Matrix4 shadowPersp;
+	bool viewLight = false;
 
 	unsigned int heightmap_index;
 	unsigned int policeBox_index;

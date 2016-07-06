@@ -75,17 +75,15 @@ int main()
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))
 		{
-			//renderer.decDirLight();
 			demo->decDirLight();
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_2))
 		{
-			//renderer.incDirLight();
 			demo->incDirLight();
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
 		{
-			renderer.switchViewPoint();
+			demo->SwitchViewPoint();
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_M))
 		{

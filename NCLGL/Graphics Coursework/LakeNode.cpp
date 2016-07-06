@@ -3,7 +3,6 @@
 LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID, Light*& l)
 	: SceneNode(Mesh::GenerateQuad(true), Vector4(1, 1, 1, 1), shader, true)
 {
-	//mesh = Mesh::GenerateQuad(true);
 	mesh->updateType(GL_PATCHES);
 	
 	mesh->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water.jpg").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
@@ -27,18 +26,6 @@ LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID,
 
 	mesh->setModelMatrix(Matrix4::Translation(Vector3(offset.x + 400, 400.0f, offset.z + 400)) *
 		Matrix4::Scale(Vector3(offset.x - (offset.x / 2.6f), 1.0f, offset.z - (offset.z / 2.5f))));
-
-	/*nodeShader = new Shader(File_Locs::SHADER_DIR + "reflect_vert_shader.glsl", File_Locs::SHADER_DIR + "reflect_frag_shader.glsl", 
-		File_Locs::SHADER_DIR + "reflect_TCS_shader.glsl", File_Locs::SHADER_DIR + "reflect_TES_shader.glsl");
-
-	if (!nodeShader->LinkProgram())
-	{
-		cout << "Initialisation failed...Lake shader program failed to compile." << endl;
-		system("pause");
-		exit(1);
-	}*/
-
-	//nodeShader = shader;
 
 	cameraPos_loc = glGetUniformLocation(nodeShader->GetProgram(), "cameraPos");
 	diffuseTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "diffuseTex");

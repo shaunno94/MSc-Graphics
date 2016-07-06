@@ -31,11 +31,6 @@ SceneNode::~SceneNode()
 			children[i] = nullptr;
 		}
 	}
-	if (nodeShader)
-	{
-		//delete nodeShader;
-		nodeShader = nullptr;
-	}
 }
 
 void SceneNode::AddChild(SceneNode* s)
@@ -48,12 +43,7 @@ void SceneNode::DrawNode(bool shadowPass)
 {
 	if (mesh)
 	{
-		if (shadowPass && castShadow)
-			mesh->Draw();
-		else if(shadowPass && directionalLight)
-			mesh->Draw();
-		else if(!shadowPass && !directionalLight)
-			mesh->Draw();		
+		mesh->Draw();		
 	}
 }
 

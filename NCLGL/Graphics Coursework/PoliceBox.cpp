@@ -2,7 +2,7 @@
 
 OBJMesh* PoliceBox::policeBox = nullptr;
 
-PoliceBox::PoliceBox(Shader* shader, Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
+PoliceBox::PoliceBox(Shader* shader, Light*& l, Mesh* lightVol, Vector3 center, bool cleanUpMeshOnDelete)
 	: SceneNode(nullptr, Vector4(1,1,1,1), shader, cleanUpMeshOnDelete)
 {
 	Matrix4 modelTranslation = Matrix4::Translation(Vector3(center.x - 400, 1000.0f, center.z - 400));
@@ -42,17 +42,8 @@ PoliceBox::PoliceBox(Shader* shader, Light*& l, Vector3 center, bool cleanUpMesh
 	Vector3 tmp = modelTranslation.GetPositionVector();
 	tmp.y += 650.0f;
 
-	l = new Light(tmp, Vector3(0,0,0), Vector4(1.0f, 0.0f, 0.0f, 1.0f), 2000.0f, true, 0.6f, nullptr);
+	l = new Light(tmp, Vector3(0, 0, 0), Vector4(1.0f, 0.0f, 0.0f, 1.0f), 2000.0f, true, 0.6f, lightVol);
 	pb_light = l;
-
-	/*nodeShader = new Shader(File_Locs::SHADER_DIR + "PB_vert_shader.glsl", File_Locs::SHADER_DIR + "PB_frag_shader.glsl");
-
-	if (!nodeShader->LinkProgram())
-	{
-		cout << "Initialisation failed...Police box shader program failed to compile." << endl;
-		system("pause");
-		exit(1);
-	}*/
 
 	nodeColour_loc = glGetUniformLocation(nodeShader->GetProgram(), "nodeColour");
 	tardisTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "tardisTex");

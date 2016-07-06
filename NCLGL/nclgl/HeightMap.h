@@ -24,10 +24,6 @@ protected:
 	const float HEIGHTMAP_TEX_Z = 1.0f / 2.0f;
 	float heightmap_scale;
 
-	const char* SNOW = "..\\Textures\\snow.jpg";
-	const char* GRASS = "..\\Textures\\grass.jpg";
-	const char* HEIGHTS_BUMP = "..\\Textures\\Height_NRM.jpg";
-
 	GLuint snowTex;
 	GLuint grassTex;
 	GLuint height_data;

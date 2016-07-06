@@ -33,8 +33,10 @@ public:
 	inline float GetCamDist() const { return distCamera; }
 	inline void SetCamDist(float f) { distCamera = f; }
 
-	inline void IsShadowCaster(bool b) { castShadow = b; }
-	inline void IsDirectionalLight(bool b) { directionalLight = b; }
+	inline void SetShadowCaster(bool b) { castShadow = b; }
+	inline void SetDirectionalLight(bool b) { directionalLight = b; }
+	inline bool IsShadowCaster() { return castShadow; }
+	inline bool IsDirectionalLight() { return directionalLight; }
 
 	static bool CompareByCamDist(SceneNode* a, SceneNode* b) { return a->distCamera < b->distCamera; }
 

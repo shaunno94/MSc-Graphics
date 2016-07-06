@@ -6,7 +6,7 @@
 class HeightMapNode : public SceneNode
 {
 public:
-	HeightMapNode(Shader* shader, Camera* cam, Vector3& hm_center);
+	HeightMapNode(Shader* shader, Vector3& hm_center);
 	virtual ~HeightMapNode();
 	virtual void Update(float msec);
 	virtual void DrawNode(bool shadowPass = false);
@@ -27,6 +27,4 @@ protected:
 	GLuint heights_nrm_loc;
 	GLuint tes_outer_loc;
 	GLuint tes_inner_loc;
-
-	Camera* camera;
 };

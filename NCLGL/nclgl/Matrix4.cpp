@@ -271,7 +271,11 @@ Matrix4 Matrix4::Inverse(Matrix4& a)
 	det = a.values[0] * m.values[0] + a.values[1] * m.values[4] + a.values[2] * m.values[8] + a.values[3] * m.values[12];
 
 	if (det == 0)
-		return NULL;
+	{
+		 m.ToIdentity();
+		 return m;
+	}
+
 
 	det = (1.0 / det);
 

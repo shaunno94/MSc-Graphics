@@ -52,12 +52,12 @@ HeightMap::HeightMap(const char* file, const char* heights_nrm, float scale, con
 
 	heightsNRM = SOIL_load_OGL_texture(heights_nrm, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::SetTextureRepeating(heightsNRM, false);
-
-	snowTex = SOIL_load_OGL_texture(SNOW, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
+	
+	snowTex = SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "snow.jpg").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::GenerateMipMaps(snowTex);
 	OGLRenderer::SetTextureFiltering(snowTex, true, true);
 
-	grassTex = SOIL_load_OGL_texture(GRASS, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
+	grassTex = SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "grass.jpg").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::GenerateMipMaps(grassTex);
 	OGLRenderer::SetTextureFiltering(grassTex, true, true);
 

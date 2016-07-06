@@ -32,11 +32,16 @@ Scene::~Scene()
 	sceneShaderProgs.clear();
 	pointLights.clear();
 	sceneObjects.clear();
+	lightIndex.clear();
 }
 
-unsigned int Scene::AddSceneObject(SceneNode* node)
+unsigned int Scene::AddSceneObject(SceneNode* node, bool dirLight)
 {
 	sceneObjects.push_back(node);
+
+	if (dirLight)
+		lightIndex.push_back(sceneObjects.size() - 1);
+
 	return sceneObjects.size() - 1;
 }
 
@@ -56,7 +61,8 @@ unsigned int Scene::AddShaderProgram(Shader* shader)
 void Scene::UpdateScene(float msec)
 {
 	sceneCamera->UpdateCamera(msec);
-	SceneNode::context->UpdateViewMatrix(sceneCamera->BuildViewMatrix());
+	viewMatrix = sceneCamera->BuildViewMatrix();
+	SceneNode::context->UpdateViewMatrix(viewMatrix);
 
 	for (int i = 0; i < sceneObjects.size(); i++)
 	{
@@ -64,11 +70,29 @@ void Scene::UpdateScene(float msec)
 	}
 }
 
-void Scene::DrawScene(bool shadowPass)
+void Scene::DrawScene(bool shadowPass, bool lightPass)
 {
-	for (int i = 0; i < sceneObjects.size(); i++)
+	if (!lightPass)
 	{
-		sceneObjects[i]->DrawNode(shadowPass);
+		for (int i = 0; i < sceneObjects.size(); i++)
+		{
+			if (shadowPass)
+			{
+				if (sceneObjects[i]->IsShadowCaster())
+					sceneObjects[i]->DrawNode(shadowPass);
+			}
+			else if (!sceneObjects[i]->IsDirectionalLight())
+			{
+				sceneObjects[i]->DrawNode(shadowPass);
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < lightIndex.size(); i++)
+		{
+			sceneObjects[lightIndex[i]]->DrawNode();
+		}
 	}
 }
 
