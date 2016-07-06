@@ -3,13 +3,13 @@
 unsigned int SceneNode::current_ID = 0;
 OGLRenderer* SceneNode::context = nullptr;
 
-SceneNode::SceneNode(Mesh* mesh, Vector4 colour, bool cleanupMeshOnDelete)
+SceneNode::SceneNode(Mesh* mesh, Vector4 colour, Shader* shader, bool cleanupMeshOnDelete)
 {
 	this->mesh = mesh;
 	this->colour = colour;
 	this->deleteMesh = cleanupMeshOnDelete;
+	this->nodeShader = shader;
 	parent = nullptr;
-	nodeShader = nullptr;
 	modelScale = Vector3(1, 1, 1);
 	boundingRadius = 1.0f;
 	distCamera = 0.0f;
@@ -48,7 +48,12 @@ void SceneNode::DrawNode(bool shadowPass)
 {
 	if (mesh)
 	{
-		mesh->Draw();
+		if (shadowPass && castShadow)
+			mesh->Draw();
+		else if(shadowPass && directionalLight)
+			mesh->Draw();
+		else if(!shadowPass && !directionalLight)
+			mesh->Draw();		
 	}
 }
 

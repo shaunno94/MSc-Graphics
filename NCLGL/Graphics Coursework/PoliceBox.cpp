@@ -2,32 +2,32 @@
 
 OBJMesh* PoliceBox::policeBox = nullptr;
 
-PoliceBox::PoliceBox(Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
-	: SceneNode(nullptr, Vector4(1,1,1,1), cleanUpMeshOnDelete)
+PoliceBox::PoliceBox(Shader* shader, Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
+	: SceneNode(nullptr, Vector4(1,1,1,1), shader, cleanUpMeshOnDelete)
 {
 	Matrix4 modelTranslation = Matrix4::Translation(Vector3(center.x - 400, 1000.0f, center.z - 400));
 	Vector3 modelScale = Vector3(90.0f, 90.0f, 90.0f);
 
-	SceneNode* root = new SceneNode(policeBox->GetChild(ROOT), Vector4(0, 0, 1, 1), cleanUpMeshOnDelete);
+	SceneNode* root = new SceneNode(policeBox->GetChild(ROOT), Vector4(0, 0, 1, 1), shader, cleanUpMeshOnDelete);
 	root->SetModelScale(modelScale);
 	root->SetTransform(modelTranslation);
 	root->SetBoundingRadius(1.0f);
 	root->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
 	AddChild(root);
 
-	SceneNode* window = new SceneNode(policeBox->GetChild(CHILD_WINDOW), Vector4(0, 0, 0, 0.0f), cleanUpMeshOnDelete);
+	SceneNode* window = new SceneNode(policeBox->GetChild(CHILD_WINDOW), Vector4(0, 0, 0, 0.0f), shader, cleanUpMeshOnDelete);
 	window->SetModelScale(modelScale);
 	window->SetTransform(modelTranslation);
 	window->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_Glass1_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
 	AddChild(window);
 	
-	SceneNode* light = new SceneNode(policeBox->GetChild(PB_CHILD_LIGHT), Vector4(0, 0, 0, 0.0f), cleanUpMeshOnDelete);
+	SceneNode* light = new SceneNode(policeBox->GetChild(PB_CHILD_LIGHT), Vector4(0, 0, 0, 0.0f), shader, cleanUpMeshOnDelete);
 	light->SetModelScale(modelScale);
 	light->SetTransform(modelTranslation);
 	light->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_Bulb_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
 	AddChild(light);
 
-	SceneNode* inside = new SceneNode(policeBox->GetChild(CHILD_INSIDE), Vector4(0, 0, 0, 0.0f), cleanUpMeshOnDelete);
+	SceneNode* inside = new SceneNode(policeBox->GetChild(CHILD_INSIDE), Vector4(0, 0, 0, 0.0f), shader, cleanUpMeshOnDelete);
 	inside->SetModelScale(modelScale);
 	inside->SetTransform(modelTranslation);
 	inside->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_inside_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
@@ -42,17 +42,17 @@ PoliceBox::PoliceBox(Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
 	Vector3 tmp = modelTranslation.GetPositionVector();
 	tmp.y += 650.0f;
 
-	l = new Light(tmp, Vector3(0,0,0), Vector4(1.0f, 0.0f, 0.0f, 1.0f), 2000.0f, true, 0.6f);
+	l = new Light(tmp, Vector3(0,0,0), Vector4(1.0f, 0.0f, 0.0f, 1.0f), 2000.0f, true, 0.6f, nullptr);
 	pb_light = l;
 
-	nodeShader = new Shader(File_Locs::SHADER_DIR + "PB_vert_shader.glsl", File_Locs::SHADER_DIR + "PB_frag_shader.glsl");
+	/*nodeShader = new Shader(File_Locs::SHADER_DIR + "PB_vert_shader.glsl", File_Locs::SHADER_DIR + "PB_frag_shader.glsl");
 
 	if (!nodeShader->LinkProgram())
 	{
 		cout << "Initialisation failed...Police box shader program failed to compile." << endl;
 		system("pause");
 		exit(1);
-	}
+	}*/
 
 	nodeColour_loc = glGetUniformLocation(nodeShader->GetProgram(), "nodeColour");
 	tardisTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "tardisTex");

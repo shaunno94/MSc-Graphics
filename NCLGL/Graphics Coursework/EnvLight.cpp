@@ -1,10 +1,11 @@
 #include "EnvLight.h"
 
 EnvLight::EnvLight(Shader* shader, Vector3 pos)
+	: SceneNode(Mesh::GenerateQuad(), Vector4(1, 1, 1, 1), shader, true)
 {
-	mesh = Mesh::GenerateQuad();
-	nodeShader = shader;
-	dirLight = new Light(Vector3(pos.x, 0.0f, pos.z), Vector3(pos.x, 1000.0f, pos.z), lightCol, 1.0f, false, 1.0f);
+	//mesh = Mesh::GenerateQuad();
+	//nodeShader = shader;
+	dirLight = new Light(Vector3(pos.x, 0.0f, pos.z), Vector3(pos.x, 1000.0f, pos.z), lightCol, 1.0f, false, 1.0f, nullptr);
 	lightRot = 0.0f;
 
 	dir_loc = glGetUniformLocation(nodeShader->GetProgram(), "dir");

@@ -4,7 +4,7 @@
 class SkyBoxNode : public SceneNode
 {
 public:
-	SkyBoxNode();
+	SkyBoxNode(Shader* shader);
 	virtual ~SkyBoxNode();
 
 	virtual void DrawNode(bool shadowPass = false);

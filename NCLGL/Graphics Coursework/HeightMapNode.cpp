@@ -1,9 +1,14 @@
 #include "HeightMapNode.h"
 
-HeightMapNode::HeightMapNode(Camera* cam, Vector3& hm_center)
+HeightMapNode::HeightMapNode(Shader* shader, Camera* cam, Vector3& hm_center)
+	: SceneNode(new HeightMap((File_Locs::TEXTURE_DIR + ("Heightmap.jpg")).c_str(), 
+		(File_Locs::TEXTURE_DIR + ("Heights_NRM.jpg")).c_str(),
+		SCALE, (File_Locs::TEXTURE_DIR + ("rockyTex.jpg")).c_str(), 
+		(File_Locs::TEXTURE_DIR + ("Heightmap_NRM.jpg")).c_str()), 
+		Vector4(1, 1, 1, 1), shader, true)
 {
-	mesh = new HeightMap((File_Locs::TEXTURE_DIR + ("Heightmap.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heights_NRM.jpg")).c_str(),
-		SCALE, (File_Locs::TEXTURE_DIR + ("rockyTex.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heightmap_NRM.jpg")).c_str());
+	/*mesh = new HeightMap((File_Locs::TEXTURE_DIR + ("Heightmap.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heights_NRM.jpg")).c_str(),
+		SCALE, (File_Locs::TEXTURE_DIR + ("rockyTex.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heightmap_NRM.jpg")).c_str());*/
 	
 	if (!mesh->GetTexture() || !mesh->getBumpMap())
 	{
@@ -19,7 +24,7 @@ HeightMapNode::HeightMapNode(Camera* cam, Vector3& hm_center)
 
 	hm_center = static_cast<HeightMap*>(mesh)->getCenter();
 
-	nodeShader = new Shader(File_Locs::SHADER_DIR + "HM_vert_shader.glsl", File_Locs::SHADER_DIR + "HM_frag_shader.glsl", 
+	/*nodeShader = new Shader(File_Locs::SHADER_DIR + "HM_vert_shader.glsl", File_Locs::SHADER_DIR + "HM_frag_shader.glsl", 
 		File_Locs::SHADER_DIR + "HM_TCS_shader.glsl", File_Locs::SHADER_DIR + "HM_TES_shader.glsl");
 
 	if (!nodeShader->LinkProgram())
@@ -27,7 +32,9 @@ HeightMapNode::HeightMapNode(Camera* cam, Vector3& hm_center)
 		cout << "Initialisation failed...Heightmap shader program failed to compile." << endl;
 		system("pause");
 		exit(1);
-	}
+	}*/
+
+	//nodeShader = shader;
 
 	heightMapTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "rockTex");
 	heights_loc = glGetUniformLocation(nodeShader->GetProgram(), "heights");

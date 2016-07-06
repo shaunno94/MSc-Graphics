@@ -6,7 +6,7 @@
 class SceneNode
 {
 public:
-	SceneNode(Mesh* m = nullptr, Vector4 colour = Vector4(1, 1, 1, 1), bool cleanupMeshOnDelete = true);
+	SceneNode(Mesh* m = nullptr, Vector4 colour = Vector4(1, 1, 1, 1), Shader* = nullptr, bool cleanupMeshOnDelete = true);
 	~SceneNode();
 
 	inline void SetTransform(const Matrix4 &m) { transform = m; }
@@ -33,6 +33,9 @@ public:
 	inline float GetCamDist() const { return distCamera; }
 	inline void SetCamDist(float f) { distCamera = f; }
 
+	inline void IsShadowCaster(bool b) { castShadow = b; }
+	inline void IsDirectionalLight(bool b) { directionalLight = b; }
+
 	static bool CompareByCamDist(SceneNode* a, SceneNode* b) { return a->distCamera < b->distCamera; }
 
 	void AddChild(SceneNode* s);
@@ -55,6 +58,8 @@ protected:
 	float boundingRadius;
 	unsigned int ID;
 	bool deleteMesh;
+	bool castShadow = false;
+	bool directionalLight = false;
 	static unsigned int current_ID;
 	
 	vector<SceneNode*> children;

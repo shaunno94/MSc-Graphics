@@ -11,6 +11,7 @@
 #include "EnvLight.h"
 #include "ParticleEmitter.h"
 #include "UI.h"
+#include <nclgl\Scene.h>
 
 enum SCENE_NODES
 {
@@ -42,18 +43,20 @@ public:
 
 	//inline void SetScale(float s) { scale = s; }
 	//inline void SetRotation(float r) { rotation = r; }
-	inline void SetPosition(Vector3& p) { static_cast<PoliceBox*>(sceneNodes[PB])->updatePos(p); }
+	/*inline void SetPosition(Vector3& p) { static_cast<PoliceBox*>(sceneNodes[PB])->updatePos(p); }
 	inline Vector3 getStartingPoint(){ return sceneNodes[PB]->GetTransform().GetPositionVector(); }
 	inline void incDirLight() { 
 		sceneLightRot += 2.0f;
 		static_cast<SkyBoxNode*>(sceneNodes[SKYBOX])->incAmbient(); }
 	inline void decDirLight() { 
 		sceneLightRot -= 2.0f;
-		static_cast<SkyBoxNode*>(sceneNodes[SKYBOX])->decAmbient(); }
+		static_cast<SkyBoxNode*>(sceneNodes[SKYBOX])->decAmbient(); }*/
 
 	inline void switchViewPoint() { viewLight = !viewLight; }
 	inline void toggleWireFrame() { wireframe = !wireframe; }
 	inline void toggleBlur()	{ blur = !blur; }
+
+	inline void SetCurrentScene(Scene* scene) { currentScene = scene; }
 
 protected:
 	virtual void UpdateScene(float msec);
@@ -67,13 +70,14 @@ protected:
 
 	void GenerateTexture(GLuint& target, bool depth = false, bool shadow = false, bool clamp = true);
 	void GenerateShadowFBO(GLuint FBO, GLuint target);
-	void initLights();
+	//void initLights();
 
-	Camera* camera;
-	OBJMesh* lightVol; //Light Volume
-	float sceneLightRot = 0.0f;
+	//Camera* camera;
+	Scene* currentScene = nullptr;
+	//OBJMesh* lightVol; //Light Volume
+	//float sceneLightRot = 0.0f;
 	Light* pb_light;
-	Vector3 heightMap_center;
+	//Vector3 heightMap_center;
 	ParticleEmitter* emitter;
 	Vector2 pixSize;
 	UI* HUD;
@@ -87,11 +91,11 @@ protected:
 	float ambientLight;
 
 	Mesh* screenQuad;
-	vector<SceneNode*> sceneNodes;
+	//vector<SceneNode*> sceneNodes;
 	vector<Shader*> shaderProgs; //Collection of shader programs.
 	vector<GLuint> fbo; //Handles to FBO objects.
 	vector<GLuint> fbo_tex; //Handles to texture objects that the FBO's write into.
-	vector<Light*> pointLights; //Array of lighting data.
+	//vector<Light*> pointLights; //Array of lighting data.
 
 	bool viewLight = false;
 	bool wireframe = false;

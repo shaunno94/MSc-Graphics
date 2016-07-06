@@ -16,7 +16,7 @@ enum PB_CHILDREN
 class PoliceBox : public SceneNode
 {
 public:
-	PoliceBox(Light*& l, Vector3 center, bool cleanUpMeshOnDelete);
+	PoliceBox(Shader* shader, Light*& l, Vector3 center, bool cleanUpMeshOnDelete);
 	virtual ~PoliceBox();
 
 	virtual void Update(float msec);

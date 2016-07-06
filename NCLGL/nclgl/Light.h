@@ -1,16 +1,18 @@
 #pragma once
 #include "Vector4.h"
 #include "Vector3.h"
+#include "Mesh.h"
 
 class Light
 {
 public:
-	Light(Vector3 pos, Vector3 offset, Vector4 col, float rad, bool Static, float inty) 
+	Light(Vector3 pos, Vector3 offset, Vector4 col, float rad, bool Static, float inty, Mesh* lightVol) 
 	{
 		position = pos; colour = col; 
 		radius = rad; isStatic = Static;
 		intensity = inty;
 		this->offset = offset;
+		this->lightVol = lightVol;
 	}
 	~Light(){}
 
@@ -28,8 +30,14 @@ public:
 	inline void setIntensity(float f) { intensity = f; }
 	inline Vector3 getOffset() const { return offset; }
 
+	inline void Draw() { 
+		if (lightVol) 
+			lightVol->Draw(); 
+	}
+
 protected:
 	Vector3 position;
+	Mesh* lightVol;
 	Vector3 offset;
 	Vector4 colour;
 	float radius;

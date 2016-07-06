@@ -6,7 +6,7 @@
 class HeightMapNode : public SceneNode
 {
 public:
-	HeightMapNode(Camera* cam, Vector3& hm_center);
+	HeightMapNode(Shader* shader, Camera* cam, Vector3& hm_center);
 	virtual ~HeightMapNode();
 	virtual void Update(float msec);
 	virtual void DrawNode(bool shadowPass = false);
