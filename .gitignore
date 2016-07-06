@@ -30,6 +30,8 @@
 
 !NCLGL/Meshes/*
 !NCLGL/GLEW/lib/*
+!NCLGL/SOIL/Release/*
+!NCLGL/SOIL/Debug/*
 !NCLGL/Graphics Coursework/Release/glew32.dll 
 !NCLGL/Graphics Coursework/Debug/glew32.dll
 NCLGL/Graphics Coursework/GraphicsCoursework.opensdf
