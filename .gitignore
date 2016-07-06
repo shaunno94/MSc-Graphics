@@ -30,6 +30,11 @@
 
 !NCLGL/Meshes/*
 !NCLGL/GLEW/lib/*
+!NCLGL/Graphics Coursework/Release/glew32.dll 
+!NCLGL/Graphics Coursework/Debug/glew32.dll
 NCLGL/Graphics Coursework/GraphicsCoursework.opensdf
 NCLGL/Graphics Coursework/GraphicsCoursework.sdf
 NCLGL/Graphics Coursework/GraphicsCoursework.v12.suo
+
+*.lastbuildstate
+*.tlog
