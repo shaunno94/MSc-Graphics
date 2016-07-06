@@ -1,4 +1,4 @@
-#version 450 core
+#version 420 core
 
 uniform samplerCube cubeTex;
 uniform float ambient;

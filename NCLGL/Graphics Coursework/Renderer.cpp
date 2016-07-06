@@ -7,10 +7,13 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	fbo.resize(TOTAL_FBO);
 	fbo_tex.resize(TOTAL_TEX);
 
-	shaderProgs[BASIC_SHADER] = new Shader(BASIC_VERT_SHADER, BASIC_FRAG_SHADER);
-	shaderProgs[LIGHT_SHADER] = new Shader(DFR_VERT_SHADER, DFR_FRAG_SHADER);
-	shaderProgs[COMBINE_SHADER] = new Shader(COMBINE_VERT_SHADER, COMBINE_FRAG_SHADER);
-	shaderProgs[BLUR_SHADER] = new Shader(BLUR_VERT_SHADER, BLUR_FRAG_SHADER);
+	shaderProgs[BASIC_SHADER] = new Shader(File_Locs::SHADER_DIR + "vertex_shader.glsl", File_Locs::SHADER_DIR + "fragment_shader.glsl");
+	//Deffered lighting shaders
+	shaderProgs[LIGHT_SHADER] = new Shader(File_Locs::SHADER_DIR + "DFR_vert_shader.glsl", File_Locs::SHADER_DIR + "DFR_frag_shader.glsl");
+	//Combine scene shaders
+	shaderProgs[COMBINE_SHADER] = new Shader(File_Locs::SHADER_DIR + "combine_vert_shader.glsl", File_Locs::SHADER_DIR + "combine_frag_shader.glsl");
+	//Post-process gaussian blur shader
+	shaderProgs[BLUR_SHADER] = new Shader(File_Locs::SHADER_DIR + "Blur_vert_shader.glsl", File_Locs::SHADER_DIR + "Blur_frag_shader.glsl");
 	SceneNode::context = this;
 
 	for (unsigned int i = 0; i < TOTAL_SHADERS; ++i)
@@ -37,7 +40,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 
 	lightVol = new OBJMesh();
 
-	if (!lightVol->LoadOBJMesh(LIGHT_VOLUME))
+	if (!lightVol->LoadOBJMesh((File_Locs::MESH_DIR + ("ico.obj")).c_str()))
 	{
 		cout << "Initialisation failed...Light volume obj could not be loaded." << endl;
 		system("pause");

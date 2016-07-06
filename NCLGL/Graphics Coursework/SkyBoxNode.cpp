@@ -3,18 +3,26 @@
 SkyBoxNode::SkyBoxNode()
 {
 	mesh = Mesh::GenerateQuad();
-	mesh->SetTexture(SOIL_load_OGL_cubemap(SKYBOX_LEFT, SKYBOX_RIGHT,
-		SKYBOX_TOP, SKYBOX_BOTTOM, SKYBOX_FRONT, SKYBOX_BACK, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	//Skybox texture - cube map: left, right, top, bottom, front, back
+	mesh->SetTexture(SOIL_load_OGL_cubemap((File_Locs::TEXTURE_DIR + "ThickCloudsWaterLeft.png").c_str(), 
+		(File_Locs::TEXTURE_DIR + ("ThickCloudsWaterRight.png")).c_str(),
+		(File_Locs::TEXTURE_DIR + ("ThickCloudsWaterUp.png")).c_str(),
+		(File_Locs::TEXTURE_DIR + ("ThickCloudsWaterDown.png")).c_str(),
+		(File_Locs::TEXTURE_DIR + ("ThickCloudsWaterFront.png")).c_str(),
+		(File_Locs::TEXTURE_DIR + ("ThickCloudsWaterBack.png")).c_str(),
+		SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+
 	OGLRenderer::SetTextureRepeating(mesh->GetTexture(), true);
 
 	if (!mesh->GetTexture())
 	{
-		cout << "Initialisation failed...Heightmap texture failed to load." << endl;
+		cout << "Initialisation failed...Skybox texture failed to load." << endl;
 		system("pause");
 		exit(1);
 	}
 
-	nodeShader = new Shader(SKYBOX_VERT_SHADER, SKYBOX_FRAG_SHADER);
+	nodeShader = new Shader(File_Locs::SHADER_DIR + "SB_vertex_shader.glsl", File_Locs::SHADER_DIR + "SB_frag_shader.glsl");
+
 	if (!nodeShader->LinkProgram())
 	{
 		cout << "Initialisation failed...Skybox shader program failed to compile." << endl;

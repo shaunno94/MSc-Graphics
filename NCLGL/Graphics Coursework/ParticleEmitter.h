@@ -141,10 +141,6 @@ protected:
 	std::vector<Particle*>	particles;	//Active particles stay in here :)
 	std::vector<Particle*>	freeList;	//'Spare' particles stay in here...
 
-	const char* EMITTER_VERT_SHADER = "..\\Shaders\\vertex_shader.glsl";
-	const char* EMITTER_GEO_SHADER = "..\\Shaders\\emt_geo_shader.glsl";
-	const char* EMITTER_FRAG_SHADER = "..\\Shaders\\emt_frag_shader.glsl";
-
 	GLuint diffuseTex_loc;
 	GLuint pSize_loc;
 };

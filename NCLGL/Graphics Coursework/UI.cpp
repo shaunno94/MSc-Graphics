@@ -4,7 +4,7 @@ UI::UI(int width, int height, unsigned int bytes_used, Vector2 pixSize, Shader* 
 {
 	int conv = int(pow(1024, 2));
 	this->pixSize = pixSize;
-	font = new Font(SOIL_load_OGL_texture(FONT_FILE, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT), 16, 16);
+	font = new Font(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "tahoma.tga").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT), 16, 16);
 	textarr.push_back(new TextMesh("Memory Used: " + to_string((Mesh::GetBytesUsed() + bytes_used) / conv) + "(MB)", *font));
 	textarr.push_back(new TextMesh("Camera Controls: W, A, S, D, Q, E", *font));
 	textarr.push_back(new TextMesh("Tardis Controls: I, J, K, L, U, O", *font));

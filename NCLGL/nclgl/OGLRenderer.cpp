@@ -147,7 +147,7 @@ OGLRenderer::OGLRenderer(Window &window)	{
 	window.SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
 
 	if(!debugDrawingRenderer) {
-		debugDrawShader		 = new Shader(SHADERDIR"/DebugVertex.glsl", SHADERDIR"DebugFragment.glsl");
+		debugDrawShader		 = new Shader(File_Locs::SHADER_DIR + "DebugVertex.glsl", File_Locs::SHADER_DIR + "DebugFragment.glsl");
 		orthoDebugData		 = new DebugDrawData();
 		perspectiveDebugData = new DebugDrawData();
 		debugDrawingRenderer = this;	

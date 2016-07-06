@@ -1,4 +1,5 @@
-#version 450 core
+#version 420 core
+
 uniform sampler2D diffuseTex;
 in Vertex {
 	vec2 texCoord;

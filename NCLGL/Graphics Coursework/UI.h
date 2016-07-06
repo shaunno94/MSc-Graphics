@@ -11,15 +11,16 @@ public:
 	void Update(float msec);
 
 private:
+	const float TEXT_SIZE = 16.0f;
+
 	Font* font;
 	TextMesh* fpsText;
 	vector<TextMesh*> textarr;
 	Vector2 pixSize;
 	Matrix4 identity;
 	Shader* nodeShader;
+
 	int width, height;
-	const char* FONT_FILE = "..\\Textures\\tahoma.tga";
-	const float TEXT_SIZE = 16.0f;
 	int FPS = 0;
 	float timePassed = 0.0f;
 };

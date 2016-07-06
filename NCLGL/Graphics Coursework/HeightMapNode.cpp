@@ -2,9 +2,9 @@
 
 HeightMapNode::HeightMapNode(Camera* cam, Vector3& hm_center)
 {
-	mesh = new HeightMap(HEIGHTMAP_FILE, HEIGHTS_NRM, SCALE, HEIGHTMAP_TEX, HEIGHTMAP_BUMP_TEX);
-	OGLRenderer::SetTextureFiltering(mesh->GetTexture(), true, true);
-	OGLRenderer::SetTextureRepeating(mesh->GetTexture(), true);
+	mesh = new HeightMap((File_Locs::TEXTURE_DIR + ("Heightmap.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heights_NRM.jpg")).c_str(),
+		SCALE, (File_Locs::TEXTURE_DIR + ("rockyTex.jpg")).c_str(), (File_Locs::TEXTURE_DIR + ("Heightmap_NRM.jpg")).c_str());
+	
 	if (!mesh->GetTexture() || !mesh->getBumpMap())
 	{
 		cout << "Initialisation failed...Heightmap texture failed to load." << endl;
@@ -12,17 +12,23 @@ HeightMapNode::HeightMapNode(Camera* cam, Vector3& hm_center)
 		exit(1);
 	}
 
+	OGLRenderer::SetTextureFiltering(mesh->GetTexture(), true, true);
+	OGLRenderer::SetTextureRepeating(mesh->GetTexture(), true);
+
 	camera = cam;
 
 	hm_center = static_cast<HeightMap*>(mesh)->getCenter();
 
-	nodeShader = new Shader(HEIGHTMAP_VERT_SHADER, HEIGHTMAP_FRAG_SHADER, HEIGHTMAP_TCS_SHADER, HEIGHTMAP_TES_SHADER);
+	nodeShader = new Shader(File_Locs::SHADER_DIR + "HM_vert_shader.glsl", File_Locs::SHADER_DIR + "HM_frag_shader.glsl", 
+		File_Locs::SHADER_DIR + "HM_TCS_shader.glsl", File_Locs::SHADER_DIR + "HM_TES_shader.glsl");
+
 	if (!nodeShader->LinkProgram())
 	{
 		cout << "Initialisation failed...Heightmap shader program failed to compile." << endl;
 		system("pause");
 		exit(1);
 	}
+
 	heightMapTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "rockTex");
 	heights_loc = glGetUniformLocation(nodeShader->GetProgram(), "heights");
 	modelMat_loc = glGetUniformLocation(nodeShader->GetProgram(), "modelMatrix");

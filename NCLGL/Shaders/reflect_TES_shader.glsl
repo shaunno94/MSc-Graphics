@@ -1,4 +1,4 @@
-#version 450 core
+#version 420 core
 
 uniform mat4 MVP;
 uniform mat4 modelMatrix;

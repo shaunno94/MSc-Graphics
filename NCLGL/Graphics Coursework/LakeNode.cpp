@@ -4,14 +4,17 @@ LakeNode::LakeNode(Vector3 offset, Camera* cam, GLuint SB_texID, Light*& l)
 {
 	mesh = Mesh::GenerateQuad(true);
 	mesh->updateType(GL_PATCHES);
-	mesh->SetTexture(SOIL_load_OGL_texture(WATER_TEX, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+	
+	mesh->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water.jpg").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	OGLRenderer::SetTextureRepeating(mesh->GetTexture(), true);
-	mesh->SetBumpMap(SOIL_load_OGL_texture(WATER_BUMP, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
+
+	mesh->SetBumpMap(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water_NRM.jpg").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	OGLRenderer::SetTextureRepeating(mesh->getBumpMap(), true);	
 
-	water_height = SOIL_load_OGL_texture(WATER_HEIGHT, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
+	water_height = SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water_height.png").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::SetTextureRepeating(water_height, false);
-	water_height2 = SOIL_load_OGL_texture(WATER_HEIGHT2, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
+
+	water_height2 = SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water_height2.png").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::SetTextureRepeating(water_height, false);
 
 	if (!mesh->GetTexture() || !mesh->getBumpMap())
@@ -24,7 +27,9 @@ LakeNode::LakeNode(Vector3 offset, Camera* cam, GLuint SB_texID, Light*& l)
 	mesh->setModelMatrix(Matrix4::Translation(Vector3(offset.x + 400, 400.0f, offset.z + 400)) *
 		Matrix4::Scale(Vector3(offset.x - (offset.x / 2.6f), 1.0f, offset.z - (offset.z / 2.5f))));
 
-	nodeShader = new Shader(REFLECT_VERT_SHADER, REFLECT_FRAG_SHADER, REFLECT_TCS_SHADER, REFLECT_TES_SHADER);
+	nodeShader = new Shader(File_Locs::SHADER_DIR + "reflect_vert_shader.glsl", File_Locs::SHADER_DIR + "reflect_frag_shader.glsl", 
+		File_Locs::SHADER_DIR + "reflect_TCS_shader.glsl", File_Locs::SHADER_DIR + "reflect_TES_shader.glsl");
+
 	if (!nodeShader->LinkProgram())
 	{
 		cout << "Initialisation failed...Lake shader program failed to compile." << endl;

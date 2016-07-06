@@ -1,8 +1,6 @@
 #include "PoliceBox.h"
 
 OBJMesh* PoliceBox::policeBox = nullptr;
-//http://tf3dm.com/3d-model/tardis-41964.html
-const string PoliceBox::PBOX_MESH = "..\\Meshes\\TARDIS.obj";
 
 PoliceBox::PoliceBox(Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
 	: SceneNode(nullptr, Vector4(1,1,1,1), cleanUpMeshOnDelete)
@@ -14,25 +12,25 @@ PoliceBox::PoliceBox(Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
 	root->SetModelScale(modelScale);
 	root->SetTransform(modelTranslation);
 	root->SetBoundingRadius(1.0f);
-	root->GetMesh()->SetTexture(SOIL_load_OGL_texture(TARDIS_TEX, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
+	root->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
 	AddChild(root);
 
 	SceneNode* window = new SceneNode(policeBox->GetChild(CHILD_WINDOW), Vector4(0, 0, 0, 0.0f), cleanUpMeshOnDelete);
 	window->SetModelScale(modelScale);
 	window->SetTransform(modelTranslation);
-	window->GetMesh()->SetTexture(SOIL_load_OGL_texture(TARDIS_WINDOW_TEX, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
+	window->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_Glass1_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
 	AddChild(window);
 	
 	SceneNode* light = new SceneNode(policeBox->GetChild(PB_CHILD_LIGHT), Vector4(0, 0, 0, 0.0f), cleanUpMeshOnDelete);
 	light->SetModelScale(modelScale);
 	light->SetTransform(modelTranslation);
-	light->GetMesh()->SetTexture(SOIL_load_OGL_texture(TARDIS_LIGHT_TEX, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
+	light->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_Bulb_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
 	AddChild(light);
 
 	SceneNode* inside = new SceneNode(policeBox->GetChild(CHILD_INSIDE), Vector4(0, 0, 0, 0.0f), cleanUpMeshOnDelete);
 	inside->SetModelScale(modelScale);
 	inside->SetTransform(modelTranslation);
-	inside->GetMesh()->SetTexture(SOIL_load_OGL_texture(TARDIS_INSIDE_TEX, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
+	inside->GetMesh()->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("TARDIS_inside_D.tga")).c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y));
 	AddChild(inside);
 
 	node_IDS[PB_ROOT] = root->getInstanceID();
@@ -47,13 +45,15 @@ PoliceBox::PoliceBox(Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
 	l = new Light(tmp, Vector3(0,0,0), Vector4(1.0f, 0.0f, 0.0f, 1.0f), 2000.0f, true, 0.6f);
 	pb_light = l;
 
-	nodeShader = new Shader(TARDIS_VERT_SHADER, TARDIS_FRAG_SHADER);
+	nodeShader = new Shader(File_Locs::SHADER_DIR + "PB_vert_shader.glsl", File_Locs::SHADER_DIR + "PB_frag_shader.glsl");
+
 	if (!nodeShader->LinkProgram())
 	{
 		cout << "Initialisation failed...Police box shader program failed to compile." << endl;
 		system("pause");
 		exit(1);
 	}
+
 	nodeColour_loc = glGetUniformLocation(nodeShader->GetProgram(), "nodeColour");
 	tardisTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "tardisTex");
 	usingTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "usingTex");
@@ -63,7 +63,8 @@ PoliceBox::PoliceBox(Light*& l, Vector3 center, bool cleanUpMeshOnDelete)
 
 void PoliceBox::CreateBoxInstance()
 {
-	policeBox = new OBJMesh(PBOX_MESH);
+	//Mesh from: http://tf3dm.com/3d-model/tardis-41964.html
+	policeBox = new OBJMesh(File_Locs::MESH_DIR + "TARDIS.obj");
 }
 
 void PoliceBox::DeleteBoxInstance()

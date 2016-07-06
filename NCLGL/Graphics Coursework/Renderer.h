@@ -64,7 +64,6 @@ protected:
 	void DrawPointLights(); //Lighting Render Pass.
 	void DrawCombinedScene(); //Combination Render Pass.
 	void DrawPostProcess(); //Do any post processing
-	void DrawUI(const float size);
 
 	void GenerateTexture(GLuint& target, bool depth = false, bool shadow = false, bool clamp = true);
 	void GenerateShadowFBO(GLuint FBO, GLuint target);
@@ -93,25 +92,6 @@ protected:
 	vector<GLuint> fbo; //Handles to FBO objects.
 	vector<GLuint> fbo_tex; //Handles to texture objects that the FBO's write into.
 	vector<Light*> pointLights; //Array of lighting data.
-
-	const char* LIGHT_VOLUME = "..\\Meshes\\ico.obj";
-	
-	const char* BASIC_VERT_SHADER = "..\\Shaders\\vertex_shader.glsl";
-	const char* BASIC_FRAG_SHADER = "..\\Shaders\\fragment_shader.glsl";
-	//Deffered lighting shaders
-	const char* DFR_VERT_SHADER = "..\\Shaders\\DFR_vert_shader.glsl";
-	const char* DFR_FRAG_SHADER = "..\\Shaders\\DFR_frag_shader.glsl";
-	//Combine scene shaders
-	const char* COMBINE_VERT_SHADER = "..\\Shaders\\combine_vert_shader.glsl";
-	const char* COMBINE_FRAG_SHADER = "..\\Shaders\\combine_frag_shader.glsl";
-
-	//Lens flare post process shaders
-	const char* LF1_VERT_SHADER = "..\\Shaders\\LF1_vert_shader.glsl";
-	const char* LF1_FRAG_SHADER = "..\\Shaders\\LF1_frag_shader.glsl";
-	const char* LF2_FRAG_SHADER = "..\\Shaders\\LF2_frag_shader.glsl";
-
-	const char* BLUR_VERT_SHADER = "..\\Shaders\\Blur_vert_shader.glsl";
-	const char* BLUR_FRAG_SHADER = "..\\Shaders\\Blur_frag_shader.glsl";
 
 	bool viewLight = false;
 	bool wireframe = false;

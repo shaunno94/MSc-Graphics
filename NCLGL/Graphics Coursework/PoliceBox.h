@@ -31,17 +31,8 @@ public:
 
 protected:
 	static OBJMesh* policeBox;
-	static const string PBOX_MESH;
 	void incOpacity();
 	unsigned int node_IDS[PB_MAX_ID];
-
-	const char* TARDIS_TEX = "..\\Textures\\TARDIS_D.tga";
-	const char* TARDIS_WINDOW_TEX = "..\\Textures\\TARDIS_Glass1_D.tga";
-	const char* TARDIS_LIGHT_TEX = "..\\Textures\\TARDIS_Bulb_D.tga";
-	const char* TARDIS_INSIDE_TEX = "..\\Textures\\TARDIS_inside_D.tga";
-	//Tardis police box shader
-	const char* TARDIS_VERT_SHADER = "..\\Shaders\\PB_vert_shader.glsl";
-	const char* TARDIS_FRAG_SHADER = "..\\Shaders\\PB_frag_shader.glsl";
 
 	GLuint tardisTex_loc;
 	GLuint usingTex_loc;

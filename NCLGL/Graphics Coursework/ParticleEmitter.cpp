@@ -20,7 +20,9 @@ ParticleEmitter::ParticleEmitter(void)	{
 	particleSpeed = 0.002f;
 	numLaunchParticles = 150;
 	largestSize = 0;
-	nodeShader = new Shader(EMITTER_VERT_SHADER, EMITTER_FRAG_SHADER, "", "", EMITTER_GEO_SHADER);
+
+	nodeShader = new Shader(File_Locs::SHADER_DIR + "vertex_shader.glsl", File_Locs::SHADER_DIR + "emt_frag_shader.glsl", "", "", File_Locs::SHADER_DIR + "emt_geo_shader.glsl");
+
 	if (!nodeShader->LinkProgram())
 	{
 		cout << "Initialisation failed...Emitter shader program failed to compile." << endl;
@@ -34,8 +36,7 @@ ParticleEmitter::ParticleEmitter(void)	{
 	Each particle is a white dot, which has an alpha fade on it,
 	so the edges fade to 0.0 alpha.
 	*/
-	texture = SOIL_load_OGL_texture("..\\Textures\\particle.png",
-	SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_COMPRESS_TO_DXT);
+	texture = SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + ("particle.png")).c_str(), SOIL_LOAD_AUTO,SOIL_CREATE_NEW_ID,SOIL_FLAG_COMPRESS_TO_DXT);
 	if (!texture)
 	{
 		cout << "Initialisation failed...Emitter texture failed to load." << endl;
