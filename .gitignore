@@ -12,9 +12,11 @@
 *.v12.suo
 *.opensdf
 *.ipdb
+*.idb
 *.iobj
 *.pdb
 *.log
+*.ilk
 
 # Precompiled Headers
 *.gch
