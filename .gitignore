@@ -3,6 +3,14 @@
 *.lo
 *.o
 *.obj
+*.suo
+*.opendb
+*.sdf
+*.VC.db
+*.lastbuildstate
+*.tlog
+*.v12.suo
+*.opensdf
 
 # Precompiled Headers
 *.gch
@@ -34,9 +42,3 @@
 !NCLGL/SOIL/Debug/*
 !NCLGL/Graphics Coursework/Release/glew32.dll 
 !NCLGL/Graphics Coursework/Debug/glew32.dll
-NCLGL/Graphics Coursework/GraphicsCoursework.opensdf
-NCLGL/Graphics Coursework/GraphicsCoursework.sdf
-NCLGL/Graphics Coursework/GraphicsCoursework.v12.suo
-
-*.lastbuildstate
-*.tlog
