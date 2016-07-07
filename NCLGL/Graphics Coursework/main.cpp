@@ -40,37 +40,31 @@ int main()
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_I))
 		{
 			policeBox_pos.x += 10.0f;
-			//renderer.SetPosition(policeBox_pos);
 			demo->SetPosition(policeBox_pos);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_K))
 		{
 			policeBox_pos.x -= 10.0f;
-			//renderer.SetPosition(policeBox_pos);
 			demo->SetPosition(policeBox_pos);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_J))
 		{
 			policeBox_pos.z -= 10.0f;
-			//renderer.SetPosition(policeBox_pos);
 			demo->SetPosition(policeBox_pos);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_L))
 		{
 			policeBox_pos.z += 10.0f;
-			//renderer.SetPosition(policeBox_pos);
 			demo->SetPosition(policeBox_pos);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_U))
 		{
 			policeBox_pos.y += 10.0f;
-			//renderer.SetPosition(policeBox_pos);
 			demo->SetPosition(policeBox_pos);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_O))
 		{
 			policeBox_pos.y -= 10.0f;
-			//renderer.SetPosition(policeBox_pos);
 			demo->SetPosition(policeBox_pos);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))

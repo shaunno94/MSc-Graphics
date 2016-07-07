@@ -1,5 +1,5 @@
 #include "Renderer.h"
-unsigned int Renderer::bytes_used = 0;
+
 Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 {
 	shaderProgs.resize(TOTAL_SHADERS);
@@ -19,7 +19,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	{
 		if (!shaderProgs[i]->LinkProgram())
 		{
-			cout << "Initialisation failed...A shader program failed to compile." << endl;
+			cout << "Initialisation failed...A shader program (" << shaderProgs[i]->GetProgramName() << ") failed to compile." << endl;
 			system("pause");
 			exit(1);
 		}
@@ -27,7 +27,6 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	
 	screenQuad = Mesh::GenerateQuad();
 
-	emitter = new ParticleEmitter();
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_BLEND);
@@ -40,7 +39,6 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	glClearColor(0, 0, 0, 1);
 	glPolygonOffset(1.0, 4096.0);
 	SwitchToPerspective();
-	//initLights();
 
 	glGenFramebuffers(TOTAL_FBO, fbo.data());
 	GLenum buffers[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
@@ -109,27 +107,20 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	pixSize = Vector2(1.0f / float(width), 1.0f / float(height));
-	HUD = new UI(width, height, bytes_used, pixSize, shaderProgs[BASIC_SHADER]);
-	ambientLight = 0.25f;
-
 	init = true;
 }
 Renderer::~Renderer()
 {
 	delete screenQuad;
-	delete emitter;
-	emitter = nullptr;
 	screenQuad = nullptr; 	
 
-	unsigned int i;
-	for (i = 0; i < TOTAL_SHADERS; ++i)
+	for (unsigned int i = 0; i < TOTAL_SHADERS; ++i)
 	{
 		delete shaderProgs[i];
 		shaderProgs[i] = nullptr;
 	}
 
+	shaderProgs.clear();
 	currentShader = nullptr;
 	glDeleteFramebuffers(TOTAL_FBO, fbo.data());
 	glDeleteTextures(TOTAL_TEX, fbo_tex.data());
@@ -183,7 +174,6 @@ void Renderer::RenderScene(float msec)
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	if (currentScene)
 	{
-		prevView = (projMatrix * viewMatrix);
 		UpdateScene(msec);	
 
 		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
@@ -201,8 +191,6 @@ void Renderer::RenderScene(float msec)
 void Renderer::UpdateScene(float msec)
 {
 	currentScene->UpdateScene(msec);
-	emitter->Update(msec);
-	HUD->Update(msec);
 }
 
 void Renderer::FillBuffers()
@@ -213,10 +201,6 @@ void Renderer::FillBuffers()
 
 	currentScene->DrawScene(false);
 
-	if (!blur)
-	{
-		emitter->Draw();
-	}
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -232,7 +216,7 @@ void Renderer::DrawLights()
 	glUniform1i(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "normTex"), 6);
 	glUniform1i(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "shadowTex"), 7);
 	glUniform3fv(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "cameraPos"), 1, (float*)&currentScene->GetSceneCamera()->GetPosition());
-	glUniform2f(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "pixelSize"), pixSize.x, pixSize.y);
+	glUniform2f(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "pixelSize"), pixelPitch.x, pixelPitch.y);
 	glUniform1i(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "irradianceTex"), 13);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "invPV"), 1, false, (float*)&Matrix4::Inverse(projMatrix * viewMatrix));
 
@@ -294,27 +278,8 @@ void Renderer::DrawShadowScene()
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	//SetCurrentShader(shaderProgs[BASIC_SHADER]);
-	//glUniform1i(glGetUniformLocation(shaderProgs[BASIC_SHADER]->GetProgram(), "font"), 0);
-
-	//projMatrix = Matrix4::Perspective(100.0f, 15000.0f, 1.0f, 45.0f);
-
-	/*viewMatrix = Matrix4::Translation(Vector3(0, 0, -10000)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
-		Matrix4::Rotation(sceneLightRot, Vector3(0, 1, 0)) *
-		Matrix4::BuildViewMatrix(Vector3(0, 1, 0), Vector3(0, 0, 0), Vector3(0, 0, 1)) * Matrix4::Translation(Vector3(0, 0, 0));*/
-		//Matrix4::Translation(Vector3(-heightMap_center.x, 0, -heightMap_center.z));
-	//lightVM = viewMatrix;
-
-	//static_cast<EnvLight*>(sceneNodes[ENV_LIGHT])->setPos(Matrix4::Inverse(viewMatrix).GetPositionVector());
-	//static_cast<EnvLight*>(sceneNodes[ENV_LIGHT])->setShadowMatrix(biasMatrix * (projMatrix * viewMatrix * static_cast<HeightMapNode*>(sceneNodes[HEIGHTMAP])->getHM_ModelMatrix()));
-
-	//sceneNodes[HEIGHTMAP]->DrawNode(true);
-	//DrawPBShadows();
-
 	currentScene->DrawScene(true);
 
-	//SwitchToPerspective();
-	//static_cast<EnvLight*>(sceneNodes[ENV_LIGHT])->setShadowProjView(projMatrix * camera->BuildViewMatrix());
 	glUseProgram(0);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
@@ -365,16 +330,20 @@ void Renderer::DrawPostProcess()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo[POST_FBO]);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 		SetCurrentShader(shaderProgs[BLUR_SHADER]);
+
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO], 0);
 		glUniformMatrix4fv(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
-		glUniform2f(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "pixelSize"), pixSize.x, pixSize.y);
+		glUniform2f(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "pixelSize"), pixelPitch.x, pixelPitch.y);
 		glDisable(GL_DEPTH_TEST);
+
 		for (int i = 0; i < 4; ++i)
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO], 0);
 			glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "isVertical "), 0);
 			glUniform1i(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "diffuseTex"), 22);
+
 			if (i == 0)
 			{
 				glActiveTexture(GL_TEXTURE22);
@@ -416,16 +385,8 @@ void Renderer::DrawPostProcess()
 	}
 		
 	screenQuad->Draw();
+	currentScene->LateDraw();
 
-	HUD->Draw();
-	//currentScene->LateDraw();
 	SwitchToPerspective();
 	glUseProgram(0);
-}
-
-void Renderer::DrawPBShadows()
-{
-	SetCurrentShader(shaderProgs[BASIC_SHADER]);
-	glUniform1i(glGetUniformLocation(shaderProgs[BASIC_SHADER]->GetProgram(), "font"), 0);
-	//sceneNodes[PB]->DrawNode(true);
 }

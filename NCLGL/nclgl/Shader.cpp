@@ -1,14 +1,18 @@
 #include "Shader.h"
 
-Shader::Shader(string vFile, string fFile, string tcs, string tes, string gFile)	{
-	program		= glCreateProgram();
-	objects[SHADER_VERTEX]		= GenerateShader(vFile, GL_VERTEX_SHADER);
-	objects[SHADER_FRAGMENT]	= GenerateShader(fFile, GL_FRAGMENT_SHADER);
-	objects[SHADER_GEOMETRY]	= 0;
+Shader::Shader(string vFile, string fFile, string tcs, string tes, string gFile)	
+{
+	SetProgName(vFile, fFile, tcs, tes, gFile);
+
+	program	= glCreateProgram();
+	objects[SHADER_VERTEX] = GenerateShader(vFile, GL_VERTEX_SHADER);
+	objects[SHADER_FRAGMENT] = GenerateShader(fFile, GL_FRAGMENT_SHADER);
+	objects[SHADER_GEOMETRY] = 0;
 	objects[SHADER_TCS] = 0;
 	objects[SHADER_TES] = 0;
 
-	if(!gFile.empty()) {
+	if(!gFile.empty()) 
+	{
 		objects[SHADER_GEOMETRY]	= GenerateShader(gFile,GL_GEOMETRY_SHADER);
 		glAttachShader(program,objects[SHADER_GEOMETRY]);
 	}
@@ -24,6 +28,30 @@ Shader::Shader(string vFile, string fFile, string tcs, string tes, string gFile)
 	glAttachShader(program,objects[SHADER_FRAGMENT]);
 
 	SetDefaultAttributes();
+}
+
+void Shader::SetProgName(string vertex, string fragment, string tcs, string tes, string geometry)
+{
+	Append(vertex);
+	Append(fragment);
+	
+	if (!tcs.empty() && !tes.empty())
+	{
+		Append(tcs);
+		Append(tes);
+	}
+
+	if (!geometry.empty())
+	{
+		Append(geometry);
+	}
+}
+
+void Shader::Append(string s)
+{
+	unsigned int offset = s.find_last_of("\\");
+	progName.append(s.begin() + (offset + 1), s.end());
+	progName.insert(progName.length(), " : ", 3);
 }
 
 Shader::~Shader(void)	{

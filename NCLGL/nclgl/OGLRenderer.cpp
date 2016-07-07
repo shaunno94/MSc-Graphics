@@ -15,8 +15,7 @@ _-_-_-_-_-_-_-""  ""
 
 
 #include "OGLRenderer.h"
-
-Shader*		   OGLRenderer::debugDrawShader			= NULL;
+unsigned int	OGLRenderer::bytes_used = 0;
 
 /*
 Creates an OpenGL 3.2 CORE PROFILE rendering context. Sets itself
@@ -135,6 +134,8 @@ OGLRenderer::OGLRenderer(Window &window)
 	currentShader = 0;							//0 is the 'null' object name for shader programs...
 
 	window.SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
+
+	pixelPitch = Vector2(1.0f / float(width), 1.0f / float(height));
 }
 
 /*

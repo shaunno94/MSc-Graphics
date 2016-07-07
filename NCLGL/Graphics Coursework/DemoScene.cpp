@@ -19,6 +19,8 @@ DemoScene::DemoScene()
 	heightmap_shader_index = AddShaderProgram(new Shader(File_Locs::SHADER_DIR + "HM_vert_shader.glsl", File_Locs::SHADER_DIR + "HM_frag_shader.glsl",
 		File_Locs::SHADER_DIR + "HM_TCS_shader.glsl", File_Locs::SHADER_DIR + "HM_TES_shader.glsl"));
 
+	UI_shader_index = AddShaderProgram(new Shader(File_Locs::SHADER_DIR + "vertex_shader.glsl", File_Locs::SHADER_DIR + "fragment_shader.glsl"));
+
 	lightVol = new OBJMesh();
 
 	if (!lightVol->LoadOBJMesh((File_Locs::MESH_DIR + ("ico.obj")).c_str()))
@@ -39,12 +41,17 @@ DemoScene::DemoScene()
 	sceneCamera->SetPosition(Vector3(heightMap_center.x, 1500.0f, heightMap_center.z));
 
 	sceneObjects[heightmap_index]->SetShadowCaster(true);
-	//sceneObjects[policeBox_index]->SetShadowCaster(true);
+	sceneObjects[policeBox_index]->SetShadowCaster(true);
 	sceneObjects[envLight_index]->SetDirectionalLight(true);
 
 	shadowPersp = Matrix4::Perspective(100.0f, 15000.0f, 1.0f, 45.0f);
 
 	InitialiseLights();
+	
+	HUD = new UI(SceneNode::context->GetRenderWidth(), SceneNode::context->GetRenderHeight(), OGLRenderer::bytes_used, 
+		SceneNode::context->GetPixelPitch(), sceneShaderProgs[UI_shader_index]);
+
+	emitter = new ParticleEmitter();
 }
 
 void DemoScene::InitialiseLights()
@@ -72,12 +79,17 @@ DemoScene::~DemoScene()
 {
 	PoliceBox::DeleteBoxInstance();
 
+	delete emitter;
+	emitter = nullptr;
+
 	delete lightVol;
 	lightVol = nullptr;
 }
 
 void DemoScene::UpdateScene(float msec)
 {
+	emitter->Update(msec);
+	HUD->Update(msec);
 	Scene::UpdateScene(msec);
 }
 
@@ -97,7 +109,7 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 		static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(lightVM).GetPositionVector());
 		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (SceneNode::context->GetProjMat() * lightVM * static_cast<HeightMapNode*>(sceneObjects[heightmap_index])->getHM_ModelMatrix()));
 	}
-
+	
 	Scene::DrawScene(shadowPass, lightPass);
 
 	if (shadowPass)
@@ -107,10 +119,15 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 		
 		if (!viewLight)
 			SceneNode::context->UpdateViewMatrix(viewMatrix);
+	}	
+	else if(!lightPass)
+	{
+		emitter->Draw();
 	}
 }
 
 void DemoScene::LateDraw()
 {
+	HUD->Draw();
 	Scene::LateDraw();
 }

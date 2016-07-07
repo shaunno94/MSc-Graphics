@@ -1,6 +1,8 @@
 #include <nclgl\Scene.h>
 #include "PoliceBox.h"
 #include "SkyBoxNode.h"
+#include "ParticleEmitter.h"
+#include "UI.h"
 
 class DemoScene : public Scene
 {
@@ -44,6 +46,9 @@ private:
 	Matrix4 shadowPersp;
 	bool viewLight = false;
 
+	UI* HUD;
+	ParticleEmitter* emitter;
+
 	unsigned int heightmap_index;
 	unsigned int policeBox_index;
 	unsigned int envLight_index;
@@ -54,4 +59,5 @@ private:
 	unsigned int envLight_shader_index;
 	unsigned int skybox_shader_index;
 	unsigned int lake_shader_index;
+	unsigned int UI_shader_index;
 };

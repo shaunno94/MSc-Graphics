@@ -31,6 +31,8 @@ SceneNode::~SceneNode()
 			children[i] = nullptr;
 		}
 	}
+
+	children.clear();
 }
 
 void SceneNode::AddChild(SceneNode* s)

@@ -4,8 +4,6 @@
 #include "../nclgl/HeightMap.h"
 #include "../nclgl/SceneNode.h"
 #include "../nclgl/TextMesh.h"
-#include "ParticleEmitter.h"
-#include "UI.h"
 #include <nclgl\Scene.h>
 
 enum SCENE_NODES
@@ -44,7 +42,6 @@ public:
 
 protected:
 	virtual void UpdateScene(float msec);
-	void DrawPBShadows();
 	void DrawShadowScene(); //Create shadow map.
 	void DrawLights();
 	void FillBuffers(); //First render pass, fills G-Buffer.
@@ -56,16 +53,9 @@ protected:
 	void GenerateShadowFBO(GLuint FBO, GLuint target);
 
 	Scene* currentScene = nullptr;
-	ParticleEmitter* emitter;
-	Vector2 pixSize;
-	UI* HUD;
-
-	Matrix4 prevView;
 
 	const unsigned int SHADOW_SIZE = 4096;
 	const unsigned int LIGHTNUM = 8;
-
-	float ambientLight;
 
 	Mesh* screenQuad;
 	vector<Shader*> shaderProgs; //Collection of shader programs.
@@ -75,6 +65,4 @@ protected:
 	bool wireframe = false;
 	bool blur = false;
 	unsigned int blurSamples = 5;
-
-	static unsigned int bytes_used;
 };

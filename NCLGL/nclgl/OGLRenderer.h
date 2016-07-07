@@ -74,10 +74,14 @@ public:
 	void			UpdateShaderMatrices();
 	void			SwitchToOrtho();
 	void			SwitchToPerspective();
+	int				GetRenderWidth() const { return width; }
+	int				GetRenderHeight() const { return height; }
+	Vector2			GetPixelPitch() const { return pixelPitch; }
 	
 	static void		SetTextureRepeating(GLuint target, bool state);
 	static void		SetTextureFiltering(GLuint target, bool state, bool AF);
 	static void		GenerateMipMaps(GLuint target);
+	static unsigned int bytes_used;
 
 protected:
 	virtual void	Resize(int x, int y);	
@@ -101,10 +105,11 @@ protected:
 	HDC		deviceContext;	//...Device context?
 	HGLRC	renderContext;	//Permanent Rendering Context
 
-	static Shader*		  debugDrawShader;
-
 	GLfloat AF_largest;
 	const float FOV = 45.0f;
 	const float NEAR_PLANE = 1.0f;
 	const float FAR_PLANE = 15000.0f;
+
+	Vector2 pixelPitch;
+
 };

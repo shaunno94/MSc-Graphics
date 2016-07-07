@@ -67,17 +67,15 @@ void PoliceBox::DeleteBoxInstance()
 void PoliceBox::Update(float msec)
 {
 	transform = transform * Matrix4::Translation(pb_delta);
-	pb_light->setPos(Matrix4::Translation(pb_light->getPos() + pb_delta).GetPositionVector());
+	pb_light->setPos(Matrix4::Translation(pb_light->getPos() + (pb_delta / msec)).GetPositionVector());
 	SceneNode::Update(msec);
 	pb_delta.ToZero();
 }
 
 void PoliceBox::DrawNode(bool shadowPass)
 {
-	if (!shadowPass)
-	{
-		context->SetCurrentShader(nodeShader);
-	}
+	context->SetCurrentShader(nodeShader);
+
 	for (unsigned int i = 0; i < children.size(); ++i)
 	{
 		if (children[i]->GetMesh())

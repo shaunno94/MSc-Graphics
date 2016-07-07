@@ -49,7 +49,7 @@ unsigned int Scene::AddShaderProgram(Shader* shader)
 {
 	if (!shader->LinkProgram())
 	{
-		cout << "Initialisation failed...A shader program failed to compile." << endl;
+		cout << "Initialisation failed...A shader program (" << shader->GetProgramName() << ") failed to compile." << endl;
 		system("pause");
 		exit(1);
 	}
