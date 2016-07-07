@@ -11,7 +11,7 @@ public:
 	virtual void Update(float msec);
 	virtual void DrawNode(bool shadowPass = false);
 
-	inline Vector3 getHMCenter() { return static_cast<HeightMap*>(mesh)->getCenter(); }
+	inline Vector3 getHMCenter() const	{ return static_cast<HeightMap*>(mesh)->getCenter(); }
 	inline Matrix4& getHM_ModelMatrix() { return mesh->getModelMatrix(); }
 
 protected:	

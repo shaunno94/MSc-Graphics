@@ -24,10 +24,10 @@ public:
 	static void CreateBoxInstance();
 	static void DeleteBoxInstance();
 
-	inline int getNodeID(enum PB_ID p_id) { return node_IDS[p_id]; }
-	inline SceneNode* getObjectRoot() { return children[ROOT]; }
-	inline float getOpacity() { incOpacity(); return opacity; }
-	inline void updatePos(Vector3& v){ pb_delta = v; }
+	inline int getNodeID(enum PB_ID p_id) const { return node_IDS[p_id]; }
+	inline SceneNode* getObjectRoot()			{ return children[ROOT]; }
+	inline float getOpacity()					{ incOpacity(); return opacity; }
+	inline void updatePos(Vector3& v)			{ pb_delta = v; }
 
 protected:
 	static OBJMesh* policeBox;
@@ -43,6 +43,5 @@ protected:
 
 	float opacity;
 	bool opaque = true;
-	const unsigned int SHADOW_SIZE = 2048;
 	Light* pb_light;
 };

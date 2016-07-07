@@ -34,9 +34,11 @@ int main()
 	renderer.SetCurrentScene(demo);
 
 	Vector3 policeBox_pos = Vector3(0,0,0);
+	float dt = 0.001f;
 
 	while (window.UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
+		dt = window.GetTimer()->GetTimedMS();
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_I))
 		{
 			policeBox_pos.x += 10.0f;
@@ -69,11 +71,11 @@ int main()
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))
 		{
-			demo->decDirLight();
+			demo->decDirLight(dt);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_2))
 		{
-			demo->incDirLight();
+			demo->incDirLight(dt);
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
 		{
@@ -88,7 +90,7 @@ int main()
 			renderer.toggleBlur();
 		}
 		policeBox_pos.ToZero();
-		renderer.RenderScene(window.GetTimer()->GetTimedMS());
+		renderer.RenderScene(dt);
 	}
 
 	renderer.SetCurrentScene(nullptr);

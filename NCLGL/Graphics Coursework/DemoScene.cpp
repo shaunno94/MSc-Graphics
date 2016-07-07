@@ -21,6 +21,9 @@ DemoScene::DemoScene()
 
 	UI_shader_index = AddShaderProgram(new Shader(File_Locs::SHADER_DIR + "vertex_shader.glsl", File_Locs::SHADER_DIR + "fragment_shader.glsl"));
 
+	particle_shader_index = AddShaderProgram(new Shader(File_Locs::SHADER_DIR + "vertex_shader.glsl", File_Locs::SHADER_DIR + "emt_frag_shader.glsl",
+		"", "", File_Locs::SHADER_DIR + "emt_geo_shader.glsl"));
+
 	lightVol = new OBJMesh();
 
 	if (!lightVol->LoadOBJMesh((File_Locs::MESH_DIR + ("ico.obj")).c_str()))
@@ -47,11 +50,18 @@ DemoScene::DemoScene()
 	shadowPersp = Matrix4::Perspective(100.0f, 15000.0f, 1.0f, 45.0f);
 
 	InitialiseLights();
-	
-	HUD = new UI(SceneNode::context->GetRenderWidth(), SceneNode::context->GetRenderHeight(), OGLRenderer::bytes_used, 
+
+	HUD = new UI(SceneNode::context->GetRenderWidth(), SceneNode::context->GetRenderHeight(), true, 
 		SceneNode::context->GetPixelPitch(), sceneShaderProgs[UI_shader_index]);
 
-	emitter = new ParticleEmitter();
+	HUD->AddText("Memory Used: " + to_string((Mesh::GetBytesUsed() + OGLRenderer::bytes_used) / (1024 * 1024)) + "(MB)");
+	HUD->AddText("Camera Controls: W, A, S, D, Q, E");
+	HUD->AddText("Tardis Controls: I, J, K, L, U, O");
+	HUD->AddText("Light Controls: Rotate (1, 2), View (P)");
+	HUD->AddText("Toggle Wireframe: M");
+	HUD->AddText("Toggle Blur: N");
+
+	emitter = new ParticleEmitter(sceneShaderProgs[particle_shader_index]);
 }
 
 void DemoScene::InitialiseLights()
@@ -99,15 +109,16 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 	{
 		SceneNode::context->UpdateProjMatrix(shadowPersp);
 
-		lightVM = Matrix4::Translation(Vector3(0, 0, -10000)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
-			Matrix4::Rotation(sceneLightRot, Vector3(0, 1, 0)) *
-			Matrix4::BuildViewMatrix(Vector3(0, 1, 0), Vector3(0, 0, 0), Vector3(0, 0, 1)) *
-			Matrix4::Translation(Vector3(-heightMap_center.x, 0, -heightMap_center.z));
+		lightVM = Matrix4::Translation(Vector3(0, 0, -10000.0f)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
+			Matrix4::Rotation(sceneLightRot, Vector3(0.0f, 1.0f, 0.0f)) *
+			Matrix4::BuildViewMatrix(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f)) *
+			Matrix4::Translation(Vector3(-heightMap_center.x, 0.0f, -heightMap_center.z));
 
 		SceneNode::context->UpdateViewMatrix(lightVM);
 
 		static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(lightVM).GetPositionVector());
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (SceneNode::context->GetProjMat() * lightVM * static_cast<HeightMapNode*>(sceneObjects[heightmap_index])->getHM_ModelMatrix()));
+		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * 
+			(SceneNode::context->GetProjMat() * lightVM * static_cast<HeightMapNode*>(sceneObjects[heightmap_index])->getHM_ModelMatrix()));
 	}
 	
 	Scene::DrawScene(shadowPass, lightPass);

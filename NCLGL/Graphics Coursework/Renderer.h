@@ -6,21 +6,19 @@
 #include "../nclgl/TextMesh.h"
 #include <nclgl\Scene.h>
 
-enum SCENE_NODES
-{
-	HEIGHTMAP, PB, SKYBOX, LAKE, ENV_LIGHT, TOTAL_NODES
-};
-
+//Shader program enums.
 enum SHADER_PROGS
 {
 	BASIC_SHADER, LIGHT_SHADER, COMBINE_SHADER, BLUR_SHADER, TOTAL_SHADERS
 };
-//Frame buffer objects.
+
+//Frame buffer enums.
 enum FBO
 {
 	BUFFER_FBO, POINT_LIGHT_FBO, SHADOW_FBO, COMBINE_FBO, POST_FBO, TOTAL_FBO
 };
-//FBO attatchments
+
+//FBO attatchment enums.
 enum TEXTURES
 {
 	BUF_COLOUR_TEX, BUF_NRM_TEX, BUF_DEPTH_TEX, BUF_REFL_TEX, LIGHT_EMISSIVE_TEX, 
@@ -34,10 +32,8 @@ public:
 	virtual ~Renderer(void);
 	virtual void RenderScene(float msec);
 
-	
 	inline void toggleWireFrame() { wireframe = !wireframe; }
 	inline void toggleBlur()	{ blur = !blur; }
-
 	inline void SetCurrentScene(Scene* scene) { currentScene = scene; }
 
 protected:
@@ -47,7 +43,7 @@ protected:
 	void FillBuffers(); //First render pass, fills G-Buffer.
 	void DrawPointLights(); //Lighting Render Pass.
 	void DrawCombinedScene(); //Combination Render Pass.
-	void DrawPostProcess(); //Do any post processing
+	void DrawPostProcess(); //Do any post processing.
 
 	void GenerateTexture(GLuint& target, bool depth = false, bool shadow = false, bool clamp = true);
 	void GenerateShadowFBO(GLuint FBO, GLuint target);

@@ -5,10 +5,11 @@
 class UI
 {
 public:
-	UI(int width, int height, unsigned int bytes_used, Vector2 pixSize, Shader* prog);
+	UI(int width, int height, bool drawFPS, Vector2 pixSize, Shader* prog);
 	~UI();
 	void Draw();
 	void Update(float msec);
+	void AddText(string text);
 
 private:
 	const float TEXT_SIZE = 16.0f;
@@ -21,6 +22,7 @@ private:
 	Shader* nodeShader;
 
 	int width, height;
-	int FPS = 0;
+	bool drawFPS;
+	float FPS = 0.0f;
 	float timePassed = 0.0f;
 };

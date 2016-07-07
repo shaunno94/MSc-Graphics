@@ -28,16 +28,7 @@ are guaranteed to be in contiguous memory, so we could copy the lot in one go,
 and use what is known as an interleaved VBO, to have both vertex position
 and colour data in a single VBO. The particle class as it is, will work with
 1000s of particles, so have fun optimising it to reduce memory and bandwidth!
-
-
-
--_-_-_-_-_-_-_,------,
-_-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""
-
-*//////////////////////////////////////////////////////////////////////////////
-
+*/
 
 #pragma once
 #include "../NCLGL/Vector3.h"
@@ -47,42 +38,35 @@ _-_-_-_-_-_-_-""  ""
 #include "../NCLGL/SceneNode.h"
 #include <vector>
 
-struct Particle {
+struct Particle 
+{
 	Vector3 position;
 	Vector4 colour;
 	Vector3 direction;
 };
 
-class ParticleEmitter : public Mesh	{
+class ParticleEmitter : public Mesh	
+{
 public:
-	ParticleEmitter(void);
-	~ParticleEmitter(void);
+	ParticleEmitter(Shader* shader);
+	~ParticleEmitter();
 
-	/*
-	To update our particle positions, we must have an update
-	function - which has a msec float, just like the other
-	updating functions you've seen.
-	*/
 	void Update(float msec);
-
 	virtual void Draw();
 
-	/*
-	How often we spit out some new particles!
-	*/
-	float	GetParticleRate()				{ return particleRate; }
+
+	//How often we spit out some new particles
+	float	GetParticleRate() const			{ return particleRate; }
 	void	SetParticleRate(float rate)		{ particleRate = rate; }
 
-	/*
-	How long each particle lives for!
-	*/
-	float	GetParticleLifetime()			{ return particleLifetime; }
+	//How long each particle lives for
+	float	GetParticleLifetime() const		{ return particleLifetime; }
 	void	SetParticleLifetime(float life) { particleLifetime = life; }
 
 	/*
 	How big each particle will be!
 	*/
-	float	GetParticleSize()				{ return particleSize; }
+	float	GetParticleSize() const			{ return particleSize; }
 	void	SetParticleSize(float size)		{ particleSize = size; }
 
 	/*
@@ -91,26 +75,22 @@ public:
 	the emitter direction. Variance of 1 = Each particle can go in
 	any direction (with a slight bias towards the emitter direction)
 	*/
-	float	GetParticleVariance()				{ return particleVariance; }
+	float	GetParticleVariance() const			{ return particleVariance; }
 	void	SetParticleVariance(float variance) { particleVariance = variance; }
 
-	/*
-	Linear velocity of the particle
-	*/
-	float	GetParticleSpeed()				{ return particleSpeed; }
+	
+	//Linear velocity of the particle
+	float	GetParticleSpeed() const		{ return particleSpeed; }
 	void	SetParticleSpeed(float speed)	{ particleSpeed = speed; }
 
-	/*
-	How many particles does the emitter launch when it hits it's update time
-	*/
-	int		GetLaunchParticles()			{ return numLaunchParticles; }
+
+	//How many particles does the emitter launch when it hits it's update time
+	int		GetLaunchParticles() const		{ return numLaunchParticles; }
 	void	SetLaunchParticles(int num)		{ numLaunchParticles = num; }
 
-	/*
-	Launch direction of the particles
-	*/
+	//Launch direction of the particles
 	void	SetDirection(const Vector3 dir) { initialDirection = dir; }
-	Vector3 GetDirection()					{ return initialDirection; }
+	Vector3 GetDirection() const			{ return initialDirection; }
 
 protected:
 	/*
@@ -119,10 +99,9 @@ protected:
 	*/
 	Particle* GetFreeParticle();
 
-	/*
-	Resizes our vertex buffers
-	*/
-	void	ResizeArrays();
+	
+	//Resize vertex buffers
+	void ResizeArrays();
 
 	float particleRate;
 	float particleLifetime;
@@ -138,8 +117,9 @@ protected:
 
 	unsigned int largestSize;	//How large has our particle array become?
 
-	std::vector<Particle*>	particles;	//Active particles stay in here :)
-	std::vector<Particle*>	freeList;	//'Spare' particles stay in here...
+	std::vector<Particle*>	particles;	//Active particles stay in here
+	std::vector<Particle*>	freeList;	//'Spare' particles stay in here
+	std::vector<Particle*>::iterator itr;
 
 	GLuint diffuseTex_loc;
 	GLuint pSize_loc;

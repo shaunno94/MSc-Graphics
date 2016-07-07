@@ -5,7 +5,7 @@
 class LakeNode : public SceneNode
 {
 public:
-	LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID, Light*& l);
+	LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID, Light* l);
 	virtual ~LakeNode();
 
 	virtual void Update(float msec);

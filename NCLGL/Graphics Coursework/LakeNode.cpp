@@ -1,6 +1,6 @@
 #include "LakeNode.h"
 
-LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID, Light*& l)
+LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID, Light* l)
 	: SceneNode(Mesh::GenerateQuad(true), Vector4(1, 1, 1, 1), shader, true)
 {
 	mesh->updateType(GL_PATCHES);

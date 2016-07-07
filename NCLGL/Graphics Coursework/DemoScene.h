@@ -18,12 +18,12 @@ public:
 	inline Vector3 getStartingPoint() { return sceneObjects[policeBox_index]->GetTransform().GetPositionVector(); }
 	inline void SwitchViewPoint() { viewLight = !viewLight; }
 
-	inline void incDirLight() {
+	inline void incDirLight(float dt) {
 		sceneLightRot += 2.0f;
 		static_cast<SkyBoxNode*>(sceneObjects[skybox_index])->incAmbient();
 	}
 
-	inline void decDirLight() {
+	inline void decDirLight(float dt) {
 		sceneLightRot -= 2.0f;
 		static_cast<SkyBoxNode*>(sceneObjects[skybox_index])->decAmbient();
 	}
@@ -60,4 +60,5 @@ private:
 	unsigned int skybox_shader_index;
 	unsigned int lake_shader_index;
 	unsigned int UI_shader_index;
+	unsigned int particle_shader_index;
 };
