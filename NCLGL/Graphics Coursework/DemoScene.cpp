@@ -94,17 +94,19 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 
 		SceneNode::context->UpdateViewMatrix(lightVM);
 
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(viewMatrix).GetPositionVector());
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (SceneNode::context->GetProjMat() * viewMatrix * static_cast<HeightMapNode*>(sceneObjects[heightmap_index])->getHM_ModelMatrix()));
-		SceneNode::context->SwitchToPerspective();
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowProjView(SceneNode::context->GetProjMat() * viewMatrix);
+		static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(lightVM).GetPositionVector());
+		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (SceneNode::context->GetProjMat() * lightVM * static_cast<HeightMapNode*>(sceneObjects[heightmap_index])->getHM_ModelMatrix()));
 	}
 
 	Scene::DrawScene(shadowPass, lightPass);
 
-	if (shadowPass && !viewLight)
+	if (shadowPass)
 	{
-		SceneNode::context->UpdateViewMatrix(viewMatrix);
+		SceneNode::context->SwitchToPerspective();
+		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowProjView(SceneNode::context->GetProjMat() * viewMatrix);
+		
+		if (!viewLight)
+			SceneNode::context->UpdateViewMatrix(viewMatrix);
 	}
 }
 
