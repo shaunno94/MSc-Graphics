@@ -18,6 +18,7 @@ public:
 	GLuint  GetProgram() { return program;}
 	string	GetProgramName() { return progName; }
 	bool	LinkProgram();
+	GLuint	GetUniformLocation(char* name);
 
 protected:
 	bool	LoadShaderFile(string from, string &into);

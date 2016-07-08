@@ -9,7 +9,7 @@
 //Shader program enums.
 enum SHADER_PROGS
 {
-	BASIC_SHADER, LIGHT_SHADER, COMBINE_SHADER, BLUR_SHADER, TOTAL_SHADERS
+	LIGHT_SHADER, COMBINE_SHADER, BLUR_SHADER, TOTAL_SHADERS
 };
 
 //Frame buffer enums.
@@ -47,6 +47,7 @@ protected:
 
 	void GenerateTexture(GLuint& target, bool depth = false, bool shadow = false, bool clamp = true);
 	void GenerateShadowFBO(GLuint FBO, GLuint target);
+	void InitShaderUniformLocations();
 
 	Scene* currentScene = nullptr;
 
@@ -61,4 +62,27 @@ protected:
 	bool wireframe = false;
 	bool blur = false;
 	unsigned int blurSamples = 5;
+
+	unsigned int light_depthTex_loc;
+	unsigned int light_normalTex_loc;
+	unsigned int light_shadowTex_loc;
+	unsigned int light_irradianceTex_loc;
+	unsigned int light_camera_loc;
+	unsigned int light_pixelSize_loc;
+	unsigned int light_invProjView_loc;
+	unsigned int light_directional_loc;
+
+	unsigned int combine_projMatrix_loc;
+	unsigned int combine_diffuseTex_loc;
+	unsigned int combine_emissiveTex_loc;
+	unsigned int combine_specularTex_loc;
+	unsigned int combine_irradianceTex_loc;
+	unsigned int combine_reflTex_loc;
+	unsigned int combine_finalRender_loc;
+	unsigned int combine_blurTex_loc;
+
+	unsigned int blur_projMatrix_loc;
+	unsigned int blur_pixelSize_loc;
+	unsigned int blur_isVertical_loc;
+	unsigned int blur_diffuseTex_loc;
 };

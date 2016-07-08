@@ -20,8 +20,8 @@ ParticleEmitter::ParticleEmitter(Shader* shader)
 
 	nodeShader = shader;
 
-	diffuseTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "diffuseTex");
-	pSize_loc = glGetUniformLocation(nodeShader->GetProgram(), "particleSize");
+	diffuseTex_loc = nodeShader->GetUniformLocation("diffuseTex");
+	pSize_loc = nodeShader->GetUniformLocation("particleSize");
 	
 	/*Each particle is a white dot, which has an alpha fade on it,
 	so the edges fade to 0.0 alpha.*/

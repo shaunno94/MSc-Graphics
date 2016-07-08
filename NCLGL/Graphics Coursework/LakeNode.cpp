@@ -24,17 +24,24 @@ LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID,
 		exit(1);
 	}
 
+	if (!water_height || !water_height2)
+	{
+		cout << "Initialisation failed...Lake heightmap texture failed to load." << endl;
+		system("pause");
+		exit(1);
+	}
+
 	mesh->setModelMatrix(Matrix4::Translation(Vector3(offset.x + 400, 400.0f, offset.z + 400)) *
 		Matrix4::Scale(Vector3(offset.x - (offset.x / 2.6f), 1.0f, offset.z - (offset.z / 2.5f))));
 
-	cameraPos_loc = glGetUniformLocation(nodeShader->GetProgram(), "cameraPos");
-	diffuseTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "diffuseTex");
-	cubeTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "cubeTex");
-	bumpTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "bumpTex"); 
-	water_height_loc = glGetUniformLocation(nodeShader->GetProgram(), "waterHeights");
-	heightMatrix_loc = glGetUniformLocation(nodeShader->GetProgram(), "heightMatrix");
-	water_height2_loc = glGetUniformLocation(nodeShader->GetProgram(), "waterHeights_2");
-	heightMatrix2_loc = glGetUniformLocation(nodeShader->GetProgram(), "heightMatrix_2");
+	cameraPos_loc = nodeShader->GetUniformLocation("cameraPos");
+	diffuseTex_loc = nodeShader->GetUniformLocation("diffuseTex");
+	cubeTex_loc = nodeShader->GetUniformLocation("cubeTex");
+	bumpTex_loc = nodeShader->GetUniformLocation("bumpTex");
+	water_height_loc = nodeShader->GetUniformLocation("waterHeights");
+	heightMatrix_loc = nodeShader->GetUniformLocation("heightMatrix");
+	water_height2_loc = nodeShader->GetUniformLocation("waterHeights_2");
+	heightMatrix2_loc = nodeShader->GetUniformLocation("heightMatrix_2");
 
 	camera = cam;
 	skybox_tex = SB_texID;

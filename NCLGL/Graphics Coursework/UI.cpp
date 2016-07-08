@@ -5,6 +5,13 @@ UI::UI(int width, int height, bool drawFPS, Vector2 pixSize, Shader* prog)
 	this->pixSize = pixSize;
 	font = new Font(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "tahoma.tga").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT), 16, 16);
 	
+	if (!font)
+	{
+		cout << "Initialisation failed...Font texture failed to load." << endl;
+		system("pause");
+		exit(1);
+	}
+
 	if(drawFPS)
 		fpsText = new TextMesh("FPS: " + to_string(FPS), *font);
 
@@ -12,6 +19,9 @@ UI::UI(int width, int height, bool drawFPS, Vector2 pixSize, Shader* prog)
 	this->width = width;
 	this->height = height;
 	this->drawFPS = drawFPS;
+
+	diffuseTex_loc = nodeShader->GetUniformLocation("diffuseTex");
+	usingTex_loc = nodeShader->GetUniformLocation("usingTexture");
 }
 
 UI::~UI()
@@ -41,8 +51,8 @@ void UI::Draw()
 {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	SceneNode::context->SetCurrentShader(nodeShader);
-	glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "diffuseTex"), 0);
-	glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "font"), 1);
+	glUniform1i(diffuseTex_loc, 0);
+	glUniform1i(usingTex_loc, 1);
 
 	if (timePassed > 500.0f && drawFPS)
 	{

@@ -20,15 +20,15 @@ HeightMapNode::HeightMapNode(Shader* shader, Vector3& hm_center)
 	nodeShader = shader;
 	deleteMesh = true;
 
-	heightMapTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "rockTex");
-	heights_loc = glGetUniformLocation(nodeShader->GetProgram(), "heights");
-	modelMat_loc = glGetUniformLocation(nodeShader->GetProgram(), "modelMatrix");
-	snowTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "snowTex");
-	grassTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "grassTex");
-	bump_loc = glGetUniformLocation(nodeShader->GetProgram(), "bumpTex");
-	heights_nrm_loc = glGetUniformLocation(nodeShader->GetProgram(), "heights_nrm");
-	tes_inner_loc = glGetUniformLocation(nodeShader->GetProgram(), "innerLevel");
-	tes_outer_loc = glGetUniformLocation(nodeShader->GetProgram(), "outerLevel");
+	heightMapTex_loc = nodeShader->GetUniformLocation("rockTex");
+	heights_loc = nodeShader->GetUniformLocation("heights");
+	modelMat_loc = nodeShader->GetUniformLocation("modelMatrix");
+	snowTex_loc = nodeShader->GetUniformLocation("snowTex");
+	grassTex_loc = nodeShader->GetUniformLocation("grassTex");
+	bump_loc = nodeShader->GetUniformLocation("bumpTex");
+	heights_nrm_loc = nodeShader->GetUniformLocation("heights_nrm");
+	tes_inner_loc = nodeShader->GetUniformLocation("innerLevel");
+	tes_outer_loc = nodeShader->GetUniformLocation("outerLevel");
 }
 
 HeightMapNode::~HeightMapNode()
@@ -44,6 +44,7 @@ void HeightMapNode::DrawNode(bool shadowPass)
 	if (mesh)
 	{
 		context->SetCurrentShader(nodeShader);
+
 		if (shadowPass)
 		{
 			glUniform1i(tes_inner_loc, 1);
@@ -54,12 +55,14 @@ void HeightMapNode::DrawNode(bool shadowPass)
 			glUniform1i(tes_inner_loc, 5);
 			glUniform1i(tes_outer_loc, 5);
 		}
+
 		glUniform1i(heightMapTex_loc, 0);
 		glUniform1i(bump_loc, 1);
 		glUniform1i(heights_loc, 2);
 		glUniform1i(snowTex_loc, 10);
 		glUniform1i(grassTex_loc, 11);
 		glUniform1i(heights_nrm_loc, 12);
+
 		context->UpdateModelMatrix(mesh->getModelMatrix());
 		context->UpdateShaderMatrices();
 		mesh->Draw();

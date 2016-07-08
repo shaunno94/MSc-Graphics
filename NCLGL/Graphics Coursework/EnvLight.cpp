@@ -5,10 +5,10 @@ EnvLight::EnvLight(Shader* shader, Vector3 pos)
 {
 	dirLight = new Light(Vector3(pos.x, 0.0f, pos.z), Vector3(pos.x, 1000.0f, pos.z), lightCol, 1.0f, false, 1.0f, nullptr);
 	lightRot = 0.0f;
-
-	dir_loc = glGetUniformLocation(nodeShader->GetProgram(), "dir");
-	shadowVP_loc = glGetUniformLocation(nodeShader->GetProgram(), "shadowViewProj");
-	shadowMatrix_loc = glGetUniformLocation(nodeShader->GetProgram(), "shadowMatrix");
+	
+	dir_loc = nodeShader->GetUniformLocation("dir");
+	shadowVP_loc = nodeShader->GetUniformLocation("shadowViewProj");
+	shadowMatrix_loc = nodeShader->GetUniformLocation("shadowMatrix");
 }
 
 EnvLight::~EnvLight()

@@ -1,8 +1,7 @@
 #version 420 core
 
 uniform sampler2D diffuseTex;
-uniform int font;
-uniform int sun;
+uniform int usingTexture;
 
 in Vertex {
 	vec2 texCoord;
@@ -11,7 +10,7 @@ in Vertex {
 out vec4 FragColour;
 void main(void)	
 {
-	if(font == 1 || sun == 1)
+	if(usingTexture == 1)
 	{
 		FragColour = texture(diffuseTex, IN.texCoord);
 	}

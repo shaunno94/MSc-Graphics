@@ -45,10 +45,10 @@ PoliceBox::PoliceBox(Shader* shader, Light*& l, Mesh* lightVol, Vector3 center, 
 	l = new Light(tmp, Vector3(0, 0, 0), Vector4(1.0f, 0.0f, 0.0f, 1.0f), 2000.0f, true, 0.6f, lightVol);
 	pb_light = l;
 
-	nodeColour_loc = glGetUniformLocation(nodeShader->GetProgram(), "nodeColour");
-	tardisTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "tardisTex");
-	usingTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "usingTex");
-	opacity_loc = glGetUniformLocation(nodeShader->GetProgram(), "opacity");
+	nodeColour_loc = nodeShader->GetUniformLocation("nodeColour");
+	tardisTex_loc = nodeShader->GetUniformLocation("tardisTex");
+	usingTex_loc = nodeShader->GetUniformLocation("usingTex");
+	opacity_loc = nodeShader->GetUniformLocation("opacity");
 	pb_delta.ToZero();
 }
 
@@ -95,7 +95,7 @@ void PoliceBox::DrawNode(bool shadowPass)
 				else
 				{
 					glUniform1i(tardisTex_loc, 0);
-					glUniform1i(glGetUniformLocation(nodeShader->GetProgram(), "usingTex"), 1);
+					glUniform1i(usingTex_loc, 1);
 				}
 				glUniform1f(opacity_loc, getOpacity());
 			}

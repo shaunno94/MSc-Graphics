@@ -30,6 +30,11 @@ Shader::Shader(string vFile, string fFile, string tcs, string tes, string gFile)
 	SetDefaultAttributes();
 }
 
+GLuint Shader::GetUniformLocation(char* name)
+{
+	return glGetUniformLocation(program, name);
+}
+
 void Shader::SetProgName(string vertex, string fragment, string tcs, string tes, string geometry)
 {
 	Append(vertex);

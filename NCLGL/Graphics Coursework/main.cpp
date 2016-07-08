@@ -88,6 +88,7 @@ int main()
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 		{
 			renderer.toggleBlur();
+			demo->toggleBlur();
 		}
 		policeBox_pos.ToZero();
 		renderer.RenderScene(dt);

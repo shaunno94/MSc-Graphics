@@ -131,7 +131,7 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 		if (!viewLight)
 			SceneNode::context->UpdateViewMatrix(viewMatrix);
 	}	
-	else if(!lightPass)
+	else if(!lightPass && !blur)
 	{
 		emitter->Draw();
 	}

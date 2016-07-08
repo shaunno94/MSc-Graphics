@@ -25,4 +25,7 @@ private:
 	bool drawFPS;
 	float FPS = 0.0f;
 	float timePassed = 0.0f;
+
+	unsigned int diffuseTex_loc;
+	unsigned int usingTex_loc;
 };

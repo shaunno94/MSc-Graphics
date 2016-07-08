@@ -22,16 +22,8 @@ SkyBoxNode::SkyBoxNode(Shader* shader)
 		exit(1);
 	}
 
-	/*nodeShader = new Shader(File_Locs::SHADER_DIR + "SB_vertex_shader.glsl", File_Locs::SHADER_DIR + "SB_frag_shader.glsl");
-
-	if (!nodeShader->LinkProgram())
-	{
-		cout << "Initialisation failed...Skybox shader program failed to compile." << endl;
-		system("pause");
-		exit(1);
-	}*/
-	cubeTex_loc = glGetUniformLocation(nodeShader->GetProgram(), "cubeTex");
-	ambient_loc = glGetUniformLocation(nodeShader->GetProgram(), "ambient");
+	cubeTex_loc = nodeShader->GetUniformLocation("cubeTex");
+	ambient_loc = nodeShader->GetUniformLocation("ambient");
 }
 
 SkyBoxNode::~SkyBoxNode()

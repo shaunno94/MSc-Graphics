@@ -6,10 +6,9 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	fbo.resize(TOTAL_FBO);
 	fbo_tex.resize(TOTAL_TEX);
 
-	shaderProgs[BASIC_SHADER] = new Shader(File_Locs::SHADER_DIR + "vertex_shader.glsl", File_Locs::SHADER_DIR + "fragment_shader.glsl");
-	//Deffered lighting shaders
+	//Deffered lighting shader
 	shaderProgs[LIGHT_SHADER] = new Shader(File_Locs::SHADER_DIR + "DFR_vert_shader.glsl", File_Locs::SHADER_DIR + "DFR_frag_shader.glsl");
-	//Combine scene shaders
+	//Combine scene shader
 	shaderProgs[COMBINE_SHADER] = new Shader(File_Locs::SHADER_DIR + "combine_vert_shader.glsl", File_Locs::SHADER_DIR + "combine_frag_shader.glsl");
 	//Post-process gaussian blur shader
 	shaderProgs[BLUR_SHADER] = new Shader(File_Locs::SHADER_DIR + "Blur_vert_shader.glsl", File_Locs::SHADER_DIR + "Blur_frag_shader.glsl");
@@ -26,6 +25,8 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	}
 	
 	screenQuad = Mesh::GenerateQuad();
+
+	InitShaderUniformLocations();
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
@@ -126,6 +127,32 @@ Renderer::~Renderer()
 	glDeleteTextures(TOTAL_TEX, fbo_tex.data());
 }
 
+void Renderer::InitShaderUniformLocations()
+{
+	light_depthTex_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("depthTex");
+	light_normalTex_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("normTex");
+	light_shadowTex_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("shadowTex");
+	light_irradianceTex_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("irradianceTex");
+	light_camera_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("cameraPos");
+	light_pixelSize_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("pixelSize");
+	light_invProjView_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("invPV");
+	light_directional_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("dir");
+
+	combine_projMatrix_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("projMatrix");
+	combine_diffuseTex_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("diffuseTex");
+	combine_emissiveTex_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("emissiveTex");
+	combine_specularTex_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("specularTex");
+	combine_irradianceTex_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("irradianceTex");
+	combine_reflTex_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("reflTex");
+	combine_finalRender_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("finalRender");
+	combine_blurTex_loc = shaderProgs[COMBINE_SHADER]->GetUniformLocation("blurTex");
+
+	blur_projMatrix_loc = shaderProgs[BLUR_SHADER]->GetUniformLocation("projMatrix");
+	blur_pixelSize_loc = shaderProgs[BLUR_SHADER]->GetUniformLocation("pixelSize");
+	blur_isVertical_loc = shaderProgs[BLUR_SHADER]->GetUniformLocation("isVertical");
+	blur_diffuseTex_loc = shaderProgs[BLUR_SHADER]->GetUniformLocation("diffuseTex");
+}
+
 void Renderer::GenerateTexture(GLuint& target, bool depth, bool shadow, bool clamp)
 {
 	glGenTextures(1, &target);
@@ -212,13 +239,13 @@ void Renderer::DrawLights()
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glBlendFunc(GL_ONE, GL_ONE);
 
-	glUniform1i(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "depthTex"), 5);
-	glUniform1i(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "normTex"), 6);
-	glUniform1i(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "shadowTex"), 7);
-	glUniform3fv(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "cameraPos"), 1, (float*)&currentScene->GetSceneCamera()->GetPosition());
-	glUniform2f(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "pixelSize"), pixelPitch.x, pixelPitch.y);
-	glUniform1i(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "irradianceTex"), 13);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgs[LIGHT_SHADER]->GetProgram(), "invPV"), 1, false, (float*)&Matrix4::Inverse(projMatrix * viewMatrix));
+	glUniform1i(light_depthTex_loc, 5);
+	glUniform1i(light_normalTex_loc, 6);
+	glUniform1i(light_shadowTex_loc, 7);
+	glUniform3fv(light_camera_loc, 1, (float*)&currentScene->GetSceneCamera()->GetPosition());
+	glUniform2f(light_pixelSize_loc, pixelPitch.x, pixelPitch.y);
+	glUniform1i(light_irradianceTex_loc, 13);
+	glUniformMatrix4fv(light_invProjView_loc, 1, false, (float*)&Matrix4::Inverse(projMatrix * viewMatrix));
 
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[BUF_DEPTH_TEX]);
@@ -240,7 +267,8 @@ void Renderer::DrawLights()
 
 void Renderer::DrawPointLights()
 {
-	glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "dir"), 0);
+	glUniform1i(light_directional_loc, 0);
+
 	for (unsigned int i = 0; i < currentScene->GetNumberOfPointLights(); ++i)
 	{
 		Light* l = currentScene->GetPointLight(i);
@@ -294,13 +322,14 @@ void Renderer::DrawCombinedScene()
 
 	SetCurrentShader(shaderProgs[COMBINE_SHADER]);
 	projMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "diffuseTex"), 2);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "emissiveTex"), 3);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "specularTex"), 4);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "irradianceTex"), 13);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "reflTex"), 14);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "finalRender"), 0);
+
+	glUniformMatrix4fv(combine_projMatrix_loc, 1, false, (float*)&projMatrix);
+	glUniform1i(combine_diffuseTex_loc, 2);
+	glUniform1i(combine_emissiveTex_loc, 3);
+	glUniform1i(combine_specularTex_loc, 4);
+	glUniform1i(combine_irradianceTex_loc, 13);
+	glUniform1i(combine_reflTex_loc, 14);
+	glUniform1i(combine_finalRender_loc, 0);
 
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[BUF_COLOUR_TEX]);
@@ -326,6 +355,7 @@ void Renderer::DrawCombinedScene()
 void Renderer::DrawPostProcess()
 {
 	projMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);	
+
 	if (blur)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo[POST_FBO]);
@@ -334,15 +364,16 @@ void Renderer::DrawPostProcess()
 		SetCurrentShader(shaderProgs[BLUR_SHADER]);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO], 0);
-		glUniformMatrix4fv(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
-		glUniform2f(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "pixelSize"), pixelPitch.x, pixelPitch.y);
+		glUniformMatrix4fv(blur_projMatrix_loc, 1, false, (float*)&projMatrix);
+		glUniform2f(blur_pixelSize_loc, pixelPitch.x, pixelPitch.y);
 		glDisable(GL_DEPTH_TEST);
 
 		for (int i = 0; i < 4; ++i)
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO], 0);
-			glUniform1i(glGetUniformLocation(currentShader->GetProgram(), "isVertical "), 0);
-			glUniform1i(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "diffuseTex"), 22);
+
+			glUniform1i(blur_isVertical_loc, 0);
+			glUniform1i(blur_diffuseTex_loc, 22);
 
 			if (i == 0)
 			{
@@ -356,9 +387,11 @@ void Renderer::DrawPostProcess()
 			}
 			screenQuad->Draw();
 
-			glUniform1i(glGetUniformLocation(currentShader->GetProgram(), " isVertical "), 1);
-			glUniform1i(glGetUniformLocation(shaderProgs[BLUR_SHADER]->GetProgram(), "diffuseTex"), 23);
+			glUniform1i(blur_isVertical_loc, 1);
+			glUniform1i(blur_diffuseTex_loc, 23);
+
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_ONE], 0);
+
 			glActiveTexture(GL_TEXTURE23);
 			glBindTexture(GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO]);
 			screenQuad->Draw();
@@ -369,10 +402,10 @@ void Renderer::DrawPostProcess()
 	}
 
 	SetCurrentShader(shaderProgs[COMBINE_SHADER]);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "finalRender"), 1);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "diffuseTex"), 2);
-	glUniform1i(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "blurTex"), 26);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgs[COMBINE_SHADER]->GetProgram(), "projMatrix"), 1, false, (float*)&projMatrix);
+	glUniform1i(combine_finalRender_loc, 1);
+	glUniform1i(combine_diffuseTex_loc, 2);
+	glUniform1i(combine_blurTex_loc, 26);
+	glUniformMatrix4fv(combine_projMatrix_loc, 1, false, (float*)&projMatrix);
 	glActiveTexture(GL_TEXTURE26);
 
 	if (blur)

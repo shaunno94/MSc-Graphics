@@ -17,6 +17,7 @@ public:
 	inline void SetPosition(Vector3& p) { static_cast<PoliceBox*>(sceneObjects[policeBox_index])->updatePos(p); }
 	inline Vector3 getStartingPoint() { return sceneObjects[policeBox_index]->GetTransform().GetPositionVector(); }
 	inline void SwitchViewPoint() { viewLight = !viewLight; }
+	inline void toggleBlur() { blur = !blur; }
 
 	inline void incDirLight(float dt) {
 		sceneLightRot += 2.0f;
@@ -48,6 +49,7 @@ private:
 
 	UI* HUD;
 	ParticleEmitter* emitter;
+	bool blur = false;
 
 	unsigned int heightmap_index;
 	unsigned int policeBox_index;
