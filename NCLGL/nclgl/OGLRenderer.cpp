@@ -1,16 +1,8 @@
 /*
 Class:OGLRenderer
-Author:Rich Davison	<richard.davison4@newcastle.ac.uk>
-Description:Abstract base class for the graphics tutorials. Creates an OpenGL 
-3.2 CORE PROFILE rendering context. Each lesson will create a renderer that 
-inherits from this class - so all context creation is handled automatically,
-but students still get to see HOW such a context is created.
-
--_-_-_-_-_-_-_,------,   
-_-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""   
-
+Author:Rich Davison
+Description:Abstract base rendering class. Creates an OpenGL 
+CORE PROFILE rendering context.
 */
 
 
@@ -18,9 +10,8 @@ _-_-_-_-_-_-_-""  ""
 unsigned int	OGLRenderer::bytes_used = 0;
 
 /*
-Creates an OpenGL 3.2 CORE PROFILE rendering context. Sets itself
-as the current renderer of the passed 'parent' Window. Not the best
-way to do it - but it kept the Tutorial code down to a minimum!
+Creates an OpenGL CORE PROFILE rendering context. Sets itself
+as the current renderer of the passed 'parent' Window.
 */
 OGLRenderer::OGLRenderer(Window &window)	
 {

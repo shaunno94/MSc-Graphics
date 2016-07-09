@@ -1,18 +1,8 @@
-/******************************************************************************
+/*
 Class:Matrix4
-Implements:
 Author:Rich Davison
-Description:VERY simple 4 by 4 matrix class. Students are encouraged to modify 
-this as necessary! Overloading the [] operator to allow acces to the values
-array in a neater way might be a good start, as the floats that make the matrix 
-up are currently public.
-
--_-_-_-_-_-_-_,------,   
-_-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""   
-
-*//////////////////////////////////////////////////////////////////////////////
+Description:VERY simple 4 by 4 matrix class.
+*/
 #pragma once
 
 #include <iostream>
@@ -77,7 +67,6 @@ public:
 	//Multiplies 'this' matrix by matrix 'a'. Performs the multiplication in 'OpenGL' order (ie, backwards)
 	inline Matrix4 operator*(const Matrix4 &a) const{	
 		Matrix4 out;
-		//Students! You should be able to think up a really easy way of speeding this up...
 		for(unsigned int r = 0; r < 4; ++r) {
 			for(unsigned int c = 0; c < 4; ++c) {
 				out.values[c + (r*4)] = 0.0f;

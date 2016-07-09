@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+
+*/
+
 #pragma once
 #include"OGLRenderer.h"
 

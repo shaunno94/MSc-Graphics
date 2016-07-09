@@ -1,11 +1,13 @@
 #include "Light.h"
 #include "Mesh.h"
 
-Light::Light(Vector3 pos, Vector3 offset, Vector4 col, float rad, bool Static, float inty, Mesh* lightVol)
+Light::Light(Vector3 position, Vector3 offset, Vector4 colour, float radius, bool isStatic, float intensity, Mesh* lightVol)
 {
-	position = pos; colour = col;
-	radius = rad; isStatic = Static;
-	intensity = inty;
+	this->position = position;
+	this->colour = colour;
+	this->radius = radius;
+	this->isStatic = isStatic;
+	this->intensity = intensity;
 	this->offset = offset;
 	this->lightVol = lightVol;
 }

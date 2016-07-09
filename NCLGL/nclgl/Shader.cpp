@@ -13,7 +13,7 @@ Shader::Shader(string vFile, string fFile, string tcs, string tes, string gFile)
 
 	if(!gFile.empty()) 
 	{
-		objects[SHADER_GEOMETRY]	= GenerateShader(gFile,GL_GEOMETRY_SHADER);
+		objects[SHADER_GEOMETRY] = GenerateShader(gFile,GL_GEOMETRY_SHADER);
 		glAttachShader(program,objects[SHADER_GEOMETRY]);
 	}
 	if (!tcs.empty() && !tes.empty())
@@ -24,13 +24,13 @@ Shader::Shader(string vFile, string fFile, string tcs, string tes, string gFile)
 		glAttachShader(program, objects[SHADER_TES]);
 	}
 
-	glAttachShader(program,objects[SHADER_VERTEX]);
-	glAttachShader(program,objects[SHADER_FRAGMENT]);
+	glAttachShader(program, objects[SHADER_VERTEX]);
+	glAttachShader(program, objects[SHADER_FRAGMENT]);
 
 	SetDefaultAttributes();
 }
 
-GLuint Shader::GetUniformLocation(char* name)
+GLuint Shader::GetUniformLocation(char* name) const
 {
 	return glGetUniformLocation(program, name);
 }
@@ -59,43 +59,52 @@ void Shader::Append(string s)
 	progName.insert(progName.length(), " : ", 3);
 }
 
-Shader::~Shader(void)	{
-	for(int i = 0; i < 5; ++i) {
+Shader::~Shader(void)	
+{
+	for(int i = 0; i < SHADER_STAGES_MAX; ++i) 
+	{
 		glDetachShader(program, objects[i]);
 		glDeleteShader(objects[i]);
 	}
 	glDeleteProgram(program);
 }
 
-bool	Shader::LoadShaderFile(string from, string &into)	{
-	ifstream	file;
-	string		temp;
+bool Shader::LoadShaderFile(string from, string &into)	
+{
+	ifstream file;
+	string temp;
 
 	cout << "Loading shader text from " << from << endl << endl;
 
 	file.open(from.c_str());
-	if(!file.is_open()){
+	if(!file.is_open())
+	{
 		cout << "File does not exist!" << endl;
 		return false;
 	}
 
-	while(!file.eof()){
+	while(!file.eof())
+	{
 		getline(file,temp);
 		into += temp + "\n";
 	}
 
+#if _DEBUG
 	cout << into << endl << endl;
+#endif
 
 	file.close();
 	cout << "Loaded shader text!" << endl << endl;
 	return true;
 }
 
-GLuint	Shader::GenerateShader(string from, GLenum type)	{
+GLuint	Shader::GenerateShader(string from, GLenum type)	
+{
 	cout << "Compiling Shader..." << endl;
 
 	string load;
-	if(!LoadShaderFile(from,load)) {
+	if(!LoadShaderFile(from,load)) 
+	{
 		cout << "Compiling failed!" << endl;
 		loadFailed = true;
 		return 0;
@@ -110,7 +119,8 @@ GLuint	Shader::GenerateShader(string from, GLenum type)	{
 	GLint status;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
 
-	if (status == GL_FALSE)	{
+	if (status == GL_FALSE)	
+	{
 		cout << "Compiling failed!" << endl;
 		char error[512];
 		glGetInfoLogARB(shader, sizeof(error), NULL, error);
@@ -123,8 +133,10 @@ GLuint	Shader::GenerateShader(string from, GLenum type)	{
 	return shader;
 }
 
-bool Shader::LinkProgram()	{
-	if(loadFailed) {
+bool Shader::LinkProgram()	
+{
+	if(loadFailed) 
+	{
 		return false;
 	}
 	glLinkProgram(program); 

@@ -1,3 +1,9 @@
+/*
+Author: Shaun Heald
+This class extends Scene Node and represents a directional light.
+The directional light casts shadows, therefore some extra matrices are stored and used by this class.
+*/
+
 #pragma once
 #include "../nclgl//Light.h"
 #include "../nclgl/SceneNode.h"
@@ -13,8 +19,9 @@ public:
 
 	inline Vector3& getLightPos()	{ return dirLight->getPos(); }
 	inline Light* getEnvLight()		{ return dirLight; }
+	
+	//Utility functions to update the nodes state.
 	inline void setPos(Vector3 v)	{ dirLight->setPos(v); }
-
 	inline void setShadowProjView(Matrix4 m)	{ shadowVP = m; }
 	inline void setShadowMatrix(Matrix4 m)		{ shadowProj = m; }
 
@@ -30,5 +37,5 @@ protected:
 	GLuint shadowVP_loc;
 	GLuint shadowMatrix_loc;
 
-	Vector4 lightCol = Vector4(0.9f, 0.9f, 0.9f, 1.0f);
+	Vector4 lightColour = Vector4(0.9f, 0.9f, 0.9f, 1.0f);
 };

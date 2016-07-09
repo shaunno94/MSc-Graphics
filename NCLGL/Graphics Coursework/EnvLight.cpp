@@ -3,7 +3,8 @@
 EnvLight::EnvLight(Shader* shader, Vector3 pos)
 	: SceneNode(Mesh::GenerateQuad(), Vector4(1, 1, 1, 1), shader, true)
 {
-	dirLight = new Light(Vector3(pos.x, 0.0f, pos.z), Vector3(pos.x, 1000.0f, pos.z), lightCol, 1.0f, false, 1.0f, nullptr);
+	//Create a new light object but with no light volume. I render directional lights as a full screen quad in orthographic projection.
+	dirLight = new Light(Vector3(pos.x, 0.0f, pos.z), Vector3(pos.x, 1000.0f, pos.z), lightColour, 1.0f, false, 1.0f, nullptr);
 	lightRot = 0.0f;
 	
 	dir_loc = nodeShader->GetUniformLocation("dir");

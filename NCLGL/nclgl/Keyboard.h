@@ -1,23 +1,9 @@
-/******************************************************************************
+/*
 Class:Keyboard
 Implements:InputDevice
 Author:Rich Davison
-Description:RAW Input keyboard class. I've made absolutely no attempt to ensure
-that this class works for multiple keyboards attached to a single system.
-
-You shouldn't really have to mess with this class too much, there's nothing too
-interesting about it!
-
-STUDENT CHALLENGE! You could have a function pointer per key, that can be
-automatically called when a key is triggered / held? (Checked from within the
-Update function)
-
--_-_-_-_-_-_-_,------,   
-_-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""   
-
-*//////////////////////////////////////////////////////////////////////////////
+Description:RAW Input keyboard class.
+*/
 #pragma once
 #include "InputDevice.h"
 

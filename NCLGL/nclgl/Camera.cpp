@@ -19,7 +19,8 @@ void Camera::UpdateCamera(float msec)
 	yaw -= (Window::GetMouse()->GetRelativePosition().x);
 	pitch = min(pitch, 90.0f);
 	pitch = max(pitch, -90.0f);
-	if (yaw < 0) 
+
+	if (yaw < 0.0f) 
 	{
 		yaw += 360.0f;
 	}

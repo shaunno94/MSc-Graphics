@@ -1,7 +1,12 @@
+/*
+Author: Shaun Heald
+Extends scene node class and represents a PoliceBox object.
+Note: CreateBoxInstance should be called before using this class, this ensures
+the OBJ file has been loaded into memory. When finished DeleteBoxInstance should be called to release the OBJ data.
+*/
 #pragma once
 #include "../nclgl/SceneNode.h"
 #include "../nclgl/ObjMesh.h"
-#include "../nclgl/MD5Mesh.h"
 
 enum PB_ID
 {

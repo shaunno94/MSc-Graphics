@@ -14,11 +14,6 @@ always call new and delete on these. What we do instead, is when a particle
 off a pointer from the 'free list' - only if the free list is empty do we call
 new. This has the benefit of eventually giving us a stable memory size.
 
-Further improvements would be to reduce the size of the free list over time -
-in cases where a particle emitter has its rate slowed down, or its launch
-number reduced, we'll end up with lots of particles in the free list that will
-never be popped off.
-
 Although we're saving memory bandwidth by reducing news and deletes, there's
 still a problem. Every time we render the particle emitter, we have to
 copy all of our particles (who could be anywhere in memory) into one
@@ -27,7 +22,7 @@ a vector of <Particle> rather than <Particle*> would be better, as vectors
 are guaranteed to be in contiguous memory, so we could copy the lot in one go,
 and use what is known as an interleaved VBO, to have both vertex position
 and colour data in a single VBO. The particle class as it is, will work with
-1000s of particles, so have fun optimising it to reduce memory and bandwidth!
+1000s of particles.
 */
 
 #pragma once
@@ -55,7 +50,7 @@ public:
 	virtual void Draw();
 
 
-	//How often we spit out some new particles
+	//How often we spit out some new particles.
 	float	GetParticleRate() const			{ return particleRate; }
 	void	SetParticleRate(float rate)		{ particleRate = rate; }
 
@@ -64,7 +59,7 @@ public:
 	void	SetParticleLifetime(float life) { particleLifetime = life; }
 
 	/*
-	How big each particle will be!
+	How big each particle will be.
 	*/
 	float	GetParticleSize() const			{ return particleSize; }
 	void	SetParticleSize(float size)		{ particleSize = size; }

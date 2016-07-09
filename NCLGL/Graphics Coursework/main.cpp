@@ -83,11 +83,11 @@ int main()
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_M))
 		{
-			renderer.toggleWireFrame();
+			renderer.ToggleWireFrame();
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_N))
 		{
-			renderer.toggleBlur();
+			renderer.ToggleBlur();
 			demo->toggleBlur();
 		}
 		policeBox_pos.ToZero();

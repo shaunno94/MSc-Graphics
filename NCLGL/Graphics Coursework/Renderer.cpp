@@ -6,7 +6,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	fbo.resize(TOTAL_FBO);
 	fbo_tex.resize(TOTAL_TEX);
 
-	//Deffered lighting shader
+	//Deferred lighting shader
 	shaderProgs[LIGHT_SHADER] = new Shader(File_Locs::SHADER_DIR + "DFR_vert_shader.glsl", File_Locs::SHADER_DIR + "DFR_frag_shader.glsl");
 	//Combine scene shader
 	shaderProgs[COMBINE_SHADER] = new Shader(File_Locs::SHADER_DIR + "combine_vert_shader.glsl", File_Locs::SHADER_DIR + "combine_frag_shader.glsl");
@@ -24,10 +24,12 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 		}
 	}
 	
+	//Full screen quad used by post processing and to present the final image to screen.
 	screenQuad = Mesh::GenerateQuad();
 
 	InitShaderUniformLocations();
 
+	//Setup openGL state
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glEnable(GL_BLEND);
@@ -38,12 +40,14 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glClearDepth(1.0);
 	glClearColor(0, 0, 0, 1);
-	glPolygonOffset(1.0, 4096.0);
 	SwitchToPerspective();
 
+	//Generate frame buffer objects
 	glGenFramebuffers(TOTAL_FBO, fbo.data());
+	//Array of FBO attatchment enums
 	GLenum buffers[5] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
 
+	//Generate various textures which will be drawn into.
 	GenerateTexture(fbo_tex[BUF_DEPTH_TEX], true);
 	GenerateTexture(fbo_tex[BUF_REFL_TEX]);
 	GenerateTexture(fbo_tex[BUF_COLOUR_TEX]);
@@ -55,9 +59,10 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	GenerateTexture(fbo_tex[COMBINED_TEX]);
 	GenerateTexture(fbo_tex[MOTION_BLUR_ONE]);
 	GenerateTexture(fbo_tex[MOTION_BLUR_TWO]);
-
-	GenerateShadowFBO(fbo[SHADOW_FBO], fbo_tex[PB_SHADOW_TEX]);
 	
+	GenerateShadowFBO(fbo[SHADOW_FBO], fbo_tex[PB_SHADOW_TEX]);
+
+	//Setup all frame buffer objects.
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[BUFFER_FBO]);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[BUF_COLOUR_TEX], 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, fbo_tex[BUF_NRM_TEX], 0);
@@ -91,7 +96,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		cout << "Initialisation failed...Lighting FBO was not created." << endl;
+		cout << "Initialisation failed...Combine FBO was not created." << endl;
 		system("pause");
 		exit(1);
 	}
@@ -110,6 +115,7 @@ Renderer::Renderer(Window &parent) : OGLRenderer(parent)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	init = true;
 }
+
 Renderer::~Renderer()
 {
 	delete screenQuad;

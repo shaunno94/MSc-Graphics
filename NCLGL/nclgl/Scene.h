@@ -1,3 +1,7 @@
+/*
+Author: Shaun Heald
+
+*/
 #pragma once
 #pragma once
 #include "Camera.h"

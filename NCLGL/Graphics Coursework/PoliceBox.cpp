@@ -54,14 +54,20 @@ PoliceBox::PoliceBox(Shader* shader, Light*& l, Mesh* lightVol, Vector3 center, 
 
 void PoliceBox::CreateBoxInstance()
 {
-	//Mesh from: http://tf3dm.com/3d-model/tardis-41964.html
-	policeBox = new OBJMesh(File_Locs::MESH_DIR + "TARDIS.obj");
+	if (!policeBox)
+	{
+		//Mesh from: http://tf3dm.com/3d-model/tardis-41964.html
+		policeBox = new OBJMesh(File_Locs::MESH_DIR + "TARDIS.obj");
+	}
 }
 
 void PoliceBox::DeleteBoxInstance()
 {
-	delete policeBox;
-	policeBox = nullptr;
+	if (policeBox)
+	{
+		delete policeBox;
+		policeBox = nullptr;
+	}
 }
 
 void PoliceBox::Update(float msec)

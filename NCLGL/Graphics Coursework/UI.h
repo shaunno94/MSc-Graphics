@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+
+*/
+
 #pragma once
 #include "../nclgl/TextMesh.h"
 #include "../nclgl/SceneNode.h"

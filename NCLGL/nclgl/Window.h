@@ -24,7 +24,8 @@ Description:Creates and handles the Window, including the initialisation of the 
 
 class OGLRenderer;
 
-class Window	{
+class Window	
+{
 public:
 	Window(std::string title = "OpenGL Framework", int sizeX = 800, int sizeY = 600, bool fullScreen = false);
 	~Window(void);

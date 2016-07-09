@@ -7,6 +7,7 @@
 
 DemoScene::DemoScene()
 {
+	//Setup various shader programs.
 	skybox_shader_index = AddShaderProgram(new Shader(File_Locs::SHADER_DIR + "SB_vertex_shader.glsl", File_Locs::SHADER_DIR + "SB_frag_shader.glsl"));
 	
 	policeBox_shader_index = AddShaderProgram(new Shader(File_Locs::SHADER_DIR + "PB_vert_shader.glsl", File_Locs::SHADER_DIR + "PB_frag_shader.glsl"));
@@ -33,6 +34,7 @@ DemoScene::DemoScene()
 		exit(1);
 	}
 
+	//Setup various scene elements.
 	PoliceBox::CreateBoxInstance();
 	skybox_index = AddSceneObject(new SkyBoxNode(sceneShaderProgs[skybox_shader_index]));
 	heightmap_index = AddSceneObject(new HeightMapNode(sceneShaderProgs[heightmap_shader_index], heightMap_center));
@@ -47,13 +49,18 @@ DemoScene::DemoScene()
 	sceneObjects[policeBox_index]->SetShadowCaster(true);
 	sceneObjects[envLight_index]->SetDirectionalLight(true);
 
+	//Perspective matrix to use when drawing the shadow map, the near plane
+	//is set closer to the objects been draw to try and maintain higher accuracy 
+	//for drawing into the depth buffer. Aspect ratio is set to 1 due to the shadow map being square.
 	shadowPersp = Matrix4::Perspective(100.0f, 15000.0f, 1.0f, 45.0f);
 
 	InitialiseLights();
 
+	//UI overlay
 	HUD = new UI(SceneNode::context->GetRenderWidth(), SceneNode::context->GetRenderHeight(), true, 
 		SceneNode::context->GetPixelPitch(), sceneShaderProgs[UI_shader_index]);
 
+	//Add the text which the UI will draw
 	HUD->AddText("Memory Used: " + to_string((Mesh::GetBytesUsed() + OGLRenderer::bytes_used) / (1024 * 1024)) + "(MB)");
 	HUD->AddText("Camera Controls: W, A, S, D, Q, E");
 	HUD->AddText("Tardis Controls: I, J, K, L, U, O");
@@ -64,6 +71,9 @@ DemoScene::DemoScene()
 	emitter = new ParticleEmitter(sceneShaderProgs[particle_shader_index]);
 }
 
+/*
+This function creates point lights with a random colour in a grid of size LIGHTNUM * LIGHTNUM
+*/
 void DemoScene::InitialiseLights()
 {
 	for (unsigned int x = 0; x < LIGHTNUM; ++x)
@@ -98,7 +108,9 @@ DemoScene::~DemoScene()
 
 void DemoScene::UpdateScene(float msec)
 {
+	//Updates the particle emitter.
 	emitter->Update(msec);
+	//Upates the UI.
 	HUD->Update(msec);
 	Scene::UpdateScene(msec);
 }
@@ -109,16 +121,20 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 	{
 		SceneNode::context->UpdateProjMatrix(shadowPersp);
 
+		//Build the view matrix from the lights point of view. The light is positioned high above the heightmap
+		//approximately at the center in x,z axes, and then rotated around the heightmap based on user input.
 		lightVM = Matrix4::Translation(Vector3(0, 0, -10000.0f)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
 			Matrix4::Rotation(sceneLightRot, Vector3(0.0f, 1.0f, 0.0f)) *
 			Matrix4::BuildViewMatrix(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f)) *
 			Matrix4::Translation(Vector3(-heightMap_center.x, 0.0f, -heightMap_center.z));
 
+		//The lights view matrix will be used when drawing objects during the shadow pass.
 		SceneNode::context->UpdateViewMatrix(lightVM);
 
+		//Move the light to the correct position, taking the inverse of VM gives a model matrix and from that get the position.
 		static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(lightVM).GetPositionVector());
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * 
-			(SceneNode::context->GetProjMat() * lightVM * static_cast<HeightMapNode*>(sceneObjects[heightmap_index])->getHM_ModelMatrix()));
+		//Calculate the lights projection, view matrix which is multiplied by a bias matrix to shift the values into texture space (0.0 - 1.0).
+		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (shadowPersp * lightVM));
 	}
 	
 	Scene::DrawScene(shadowPass, lightPass);
@@ -126,6 +142,7 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 	if (shadowPass)
 	{
 		SceneNode::context->SwitchToPerspective();
+		//The cameras projection, view matrix 
 		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowProjView(SceneNode::context->GetProjMat() * viewMatrix);
 		
 		if (!viewLight)
@@ -133,12 +150,14 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 	}	
 	else if(!lightPass && !blur)
 	{
+		//Draw particles.
 		emitter->Draw();
 	}
 }
 
 void DemoScene::LateDraw()
 {
+	//Draw the UI.
 	HUD->Draw();
 	Scene::LateDraw();
 }

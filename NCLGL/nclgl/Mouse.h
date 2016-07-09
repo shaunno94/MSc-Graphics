@@ -1,15 +1,9 @@
-/******************************************************************************
+/*
 Class:Mouse
 Implements:InputDevice
 Author:Rich Davison
-Description:Windows RAW input mouse, with a couple of game-related enhancements
-
--_-_-_-_-_-_-_,------,   
-_-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""   
-
-*//////////////////////////////////////////////////////////////////////////////
+Description:Windows RAW input mouse, with a couple of game-related enhancements.
+*/
 
 #pragma once
 

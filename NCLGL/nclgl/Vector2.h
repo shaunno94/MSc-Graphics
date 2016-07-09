@@ -1,15 +1,8 @@
 #pragma once
 /*
 Class:Vector2
-Implements:
 Author:Rich Davison
-Description:VERY simple Vector2 class. Students are encouraged to modify this as necessary!
-
--_-_-_-_-_-_-_,------,   
-_-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""   
-
+Description:VERY simple Vector2 class.
 */
 #include <iostream>
 
@@ -47,4 +40,3 @@ public:
 		return Vector2(x + a.x,y + a.y);
 	}
 };
-

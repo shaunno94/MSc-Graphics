@@ -1,4 +1,4 @@
-/******************************************************************************
+/*
 Class:TextMesh
 Implements:Mesh
 Author:Rich Davison
@@ -8,13 +8,7 @@ bitmap font. Once the TextMesh has been generated, it can be used to render
 a line of text on screen - either for multiple frames by keeping its pointer
 like any other mesh, or by simply creating and deleting TextMeshes as text
 is required.
-
--_-_-_-_-_-_-_,------,
-_-_-_-_-_-_-_-|   /\_/\   This is nyantext!!
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""
-
-*//////////////////////////////////////////////////////////////////////////////
+*/
 #pragma once
 #include "../../NCLGL/mesh.h"
 #include <vector>

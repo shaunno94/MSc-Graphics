@@ -9,7 +9,7 @@ Mouse::Mouse(HWND &hwnd)	{
 
 	lastWheel   = 0;
 	frameWheel  = 0;
-	sensitivity = 0.07f;	//Chosen for no other reason than it's a nice value for my Deathadder ;)
+	sensitivity = 0.07f;
 	clickLimit  = 200.0f;
 
 	rid.usUsagePage = HID_USAGE_PAGE_GENERIC; 
@@ -39,9 +39,6 @@ void Mouse::Update(RAWINPUT* raw)	{
 		absolutePosition.y = max(absolutePosition.y, 0.0f);
 		absolutePosition.y = min(absolutePosition.y,absolutePositionBounds.y);
 	
-		/*
-		TODO: How framerate independent is this?
-		*/
 		if(raw->data.mouse.usButtonFlags & RI_MOUSE_WHEEL)	{		
 			if(raw->data.mouse.usButtonData == 120) {
 				frameWheel = 1;
@@ -51,9 +48,6 @@ void Mouse::Update(RAWINPUT* raw)	{
 			}
 		}
 
-		/*
-		Oh, Microsoft...
-		*/
 		static int buttondowns [5] = {	RI_MOUSE_BUTTON_1_DOWN,
 										RI_MOUSE_BUTTON_2_DOWN,
 										RI_MOUSE_BUTTON_3_DOWN,

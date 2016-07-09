@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+This class extends OGLRenderer, this class provides functionality to update and draw an arbitrary scene. 
+*/
+
 #pragma once
 #include "../nclgl/OGLRenderer.h"
 #include "../nclgl/Camera.h"
@@ -30,39 +35,55 @@ class Renderer : public OGLRenderer
 public:
 	Renderer(Window &parent);
 	virtual ~Renderer(void);
+	//Updates and renders the currently active scene.
 	virtual void RenderScene(float msec);
 
-	inline void toggleWireFrame() { wireframe = !wireframe; }
-	inline void toggleBlur()	{ blur = !blur; }
+	/* Public utility functions which allows some state changes to the renderer instance. */
+	inline void ToggleWireFrame() { wireframe = !wireframe; }
+	inline void ToggleBlur()	{ blur = !blur; }
 	inline void SetCurrentScene(Scene* scene) { currentScene = scene; }
 
 protected:
 	virtual void UpdateScene(float msec);
-	void DrawShadowScene(); //Create shadow map.
+	//Draw objects into the shadow map (a depth buffer).
+	void DrawShadowScene(); 
+	//Setup the rendering pipeline to draw any point or directional lights (fills emissive and specular textures).
 	void DrawLights();
-	void FillBuffers(); //First render pass, fills G-Buffer.
-	void DrawPointLights(); //Lighting Render Pass.
-	void DrawCombinedScene(); //Combination Render Pass.
-	void DrawPostProcess(); //Do any post processing.
+	//First render pass, fills the G-Buffer (diffuse, normal and depth texture).
+	void FillBuffers();
+	//Draw any point lights in the current scene.
+	void DrawPointLights(); 
+	//Renders a full screen quad which combines previously rendered textures.
+	void DrawCombinedScene(); 
+	//Do any post processing and present the final image to screen (renders full screen quad).
+	void DrawPostProcess(); 
 
+	/* Utility functions which sets up the classes state. */
 	void GenerateTexture(GLuint& target, bool depth = false, bool shadow = false, bool clamp = true);
 	void GenerateShadowFBO(GLuint FBO, GLuint target);
 	void InitShaderUniformLocations();
 
+	//A pointer to the scene which will be drawn.
 	Scene* currentScene = nullptr;
 
+	//Size of the shadow map (4k * 4k).
 	const unsigned int SHADOW_SIZE = 4096;
-	const unsigned int LIGHTNUM = 8;
 
+	//Full screen quad used by the combine & post-processing draw functions.
 	Mesh* screenQuad;
-	vector<Shader*> shaderProgs; //Collection of shader programs.
-	vector<GLuint> fbo; //Handles to FBO objects.
-	vector<GLuint> fbo_tex; //Handles to texture objects that the FBO's write into.
+	//Collection of shader programs used by the renderer class.
+	vector<Shader*> shaderProgs; 
+	//Collection of handles to FBO objects.
+	vector<GLuint> fbo; 
+	//Collection of handles to texture objects that the FBO's write/read.
+	vector<GLuint> fbo_tex; 
 
 	bool wireframe = false;
 	bool blur = false;
-	unsigned int blurSamples = 5;
+	//How many passes the post-processing blur effect will do.
+	const unsigned int blurSamples = 5;
 
+	/* Shader Uniform Handles. */
 	unsigned int light_depthTex_loc;
 	unsigned int light_normalTex_loc;
 	unsigned int light_shadowTex_loc;

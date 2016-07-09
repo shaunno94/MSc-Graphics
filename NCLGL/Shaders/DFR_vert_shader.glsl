@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+Deferred Vertex Shader
+*/
+
 #version 420 core
 
 uniform mat4 MVP;
@@ -13,17 +18,17 @@ out mat4 invProjView;
 
 void main(void)	
 {
+	//Point light - does not cast shadows
 	if(dir == 0)
 	{
 		gl_Position	= MVP * vec4(position, 1.0);
-		//invProjView = inverse(projMatrix * viewMatrix);
 		//calculating inverse on CPU, rather than per fragment.
 		invProjView = invPV;
 	}
+	//Directional light - casts shadows
 	else
 	{
 		gl_Position = projMatrix * vec4(position, 1.0);
-		//invProjView = inverse(shadowViewProj);
 		//inverse shadow view projection, calculated on the CPU.
 		invProjView = shadowViewProj;
 	}

@@ -14,17 +14,17 @@ Scene::~Scene()
 		sceneCamera = nullptr;
 	}
 
-	for (int i = 0; i < sceneObjects.size(); i++)
+	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
 		delete sceneObjects[i];
 	}
 
-	for (int i = 0; i < pointLights.size(); ++i)
+	for (unsigned int i = 0; i < pointLights.size(); ++i)
 	{
 		delete pointLights[i];
 	}
 
-	for (int i = 0; i < sceneShaderProgs.size(); i++)
+	for (unsigned int i = 0; i < sceneShaderProgs.size(); i++)
 	{
 		delete sceneShaderProgs[i];
 	}
@@ -74,7 +74,7 @@ void Scene::DrawScene(bool shadowPass, bool lightPass)
 {
 	if (!lightPass)
 	{
-		for (int i = 0; i < sceneObjects.size(); i++)
+		for (unsigned int i = 0; i < sceneObjects.size(); i++)
 		{
 			if (shadowPass)
 			{
@@ -89,7 +89,7 @@ void Scene::DrawScene(bool shadowPass, bool lightPass)
 	}
 	else
 	{
-		for (int i = 0; i < lightIndex.size(); i++)
+		for (unsigned int i = 0; i < lightIndex.size(); i++)
 		{
 			sceneObjects[lightIndex[i]]->DrawNode();
 		}

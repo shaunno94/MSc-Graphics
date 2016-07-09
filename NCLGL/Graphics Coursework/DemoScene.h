@@ -1,3 +1,9 @@
+/*
+Author: Shaun Heald
+This class extends the base scene class and holds all of the elements
+required to create a simple 'demo' scene to show various rendering techniques.
+*/
+#pragma once
 #include <nclgl\Scene.h>
 #include "PoliceBox.h"
 #include "SkyBoxNode.h"
@@ -14,8 +20,10 @@ public:
 	virtual void DrawScene(bool shadowPass, bool lightPass = false) override;
 	virtual void LateDraw() override;
 
+	//Update the 'police box' position.
 	inline void SetPosition(Vector3& p) { static_cast<PoliceBox*>(sceneObjects[policeBox_index])->updatePos(p); }
 	inline Vector3 getStartingPoint() { return sceneObjects[policeBox_index]->GetTransform().GetPositionVector(); }
+	//Switch between the camera and light view point (was mainly for debugging)
 	inline void SwitchViewPoint() { viewLight = !viewLight; }
 	inline void toggleBlur() { blur = !blur; }
 
@@ -29,8 +37,6 @@ public:
 		static_cast<SkyBoxNode*>(sceneObjects[skybox_index])->decAmbient();
 	}
 
-protected:
-
 private:
 
 	void InitialiseLights();
@@ -38,7 +44,7 @@ private:
 	const unsigned int LIGHTNUM = 8;
 
 	Light* pb_light;
-	//Light Volume
+	//Point light volume (simple ico sphere)
 	OBJMesh* lightVol; 
 	Vector3 heightMap_center;
 	float sceneLightRot = 0.0f;
@@ -51,11 +57,13 @@ private:
 	ParticleEmitter* emitter;
 	bool blur = false;
 
+	//Indices of the various scene objects used by this scene
 	unsigned int heightmap_index;
 	unsigned int policeBox_index;
 	unsigned int envLight_index;
 	unsigned int skybox_index;
 
+	//Indices of the various shaders stored by the scene
 	unsigned int heightmap_shader_index;
 	unsigned int policeBox_shader_index;
 	unsigned int envLight_shader_index;

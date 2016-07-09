@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+
+*/
+
 #pragma once
 #include "../nclgl/SceneNode.h"
 #include "../nclgl/Camera.h"
