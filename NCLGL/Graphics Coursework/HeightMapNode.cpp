@@ -4,7 +4,7 @@ HeightMapNode::HeightMapNode(Shader* shader, Vector3& hm_center)
 {
 	//Create a new heightmap by loading data from file.
 	mesh = new HeightMap((File_Locs::TEXTURE_DIR + "Heightmap.jpg").c_str(), (File_Locs::TEXTURE_DIR + "Heights_NRM.jpg").c_str(),
-		SCALE, (File_Locs::TEXTURE_DIR + "rockyTex.jpg").c_str(), (File_Locs::TEXTURE_DIR + "Heightmap_NRM.jpg").c_str());
+		SCALE, (File_Locs::TEXTURE_DIR + "rockyTex.png").c_str(), (File_Locs::TEXTURE_DIR + "Heightmap_NRM.jpg").c_str());
 	
 	if (!mesh->GetTexture() || !mesh->GetBumpMap())
 	{
