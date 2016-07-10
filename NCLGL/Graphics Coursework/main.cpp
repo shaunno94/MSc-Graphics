@@ -47,11 +47,11 @@ int main()
 	while (window.UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
 		dt = window.GetTimer()->GetTimedMS();
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_1) || Window::GetKeyboard()->KeyDown(KEYBOARD_NUMPAD1))
 		{
 			demo->DecrementDirLight(dt);
 		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_2))
+		if (Window::GetKeyboard()->KeyDown(KEYBOARD_2) || Window::GetKeyboard()->KeyDown(KEYBOARD_NUMPAD2))
 		{
 			demo->IncrementDirLight(dt);
 		}
