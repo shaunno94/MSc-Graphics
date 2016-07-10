@@ -19,8 +19,6 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Matrix4.cpp" />
-    <ClCompile Include="MD5Anim.cpp" />
-    <ClCompile Include="MD5Mesh.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
@@ -44,8 +42,6 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Matrix4.h" />
-    <ClInclude Include="MD5Anim.h" />
-    <ClInclude Include="MD5Mesh.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="OBJMesh.h" />
