@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+This fragment shader is used to combine all previously rendered textures.
+*/
+
 #version 420 core
 
 uniform sampler2D diffuseTex;
@@ -17,25 +22,26 @@ out vec4 FragColour;
 
 void main(void)	
 {
-	if(finalRender == 0)
+	if(finalRender == 0) //Pre, post-process
 	{
-		//float exposure = 0.8;
+		//Albedo
 		vec3 diffuse = texture(diffuseTex, IN.texCoord).xyz;
 		diffuse += texture(reflTex, IN.texCoord).xyz;
+		//Diffuse light (emissive)
 		vec3 light = texture(emissiveTex, IN.texCoord).xyz;
+		//Specular light
 		vec3 specular = texture(specularTex, IN.texCoord).xyz;
 		vec4 irradiance = texture(irradianceTex, IN.texCoord);
+		
 		float ambient = irradiance.r;
 		float alpha = irradiance.a;
 
-		//vec3 mapped = vec3(1.0) - exp(-(diffuse * ambient) * exposure);
-
 		FragColour.xyz = diffuse * ambient; //ambient light
-		FragColour.xyz += diffuse * light; //lambert
+		FragColour.xyz += diffuse * light; //diffuse
 		FragColour.xyz += specular; //specular
 		FragColour.a = alpha;
 	}
-	else
+	else //Final image
 	{
 		FragColour = texture(blurTex, IN.texCoord);
 	}

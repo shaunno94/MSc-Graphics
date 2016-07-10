@@ -20,22 +20,12 @@ public:
 	virtual void DrawScene(bool shadowPass, bool lightPass = false) override;
 	virtual void LateDraw() override;
 
-	//Update the 'police box' position.
-	inline void SetPosition(Vector3& p) { static_cast<PoliceBox*>(sceneObjects[policeBox_index])->updatePos(p); }
-	inline Vector3 getStartingPoint() { return sceneObjects[policeBox_index]->GetTransform().GetPositionVector(); }
 	//Switch between the camera and light view point (was mainly for debugging)
 	inline void SwitchViewPoint() { viewLight = !viewLight; }
 	inline void toggleBlur() { blur = !blur; }
 
-	inline void incDirLight(float dt) {
-		sceneLightRot += 2.0f;
-		static_cast<SkyBoxNode*>(sceneObjects[skybox_index])->incAmbient();
-	}
-
-	inline void decDirLight(float dt) {
-		sceneLightRot -= 2.0f;
-		static_cast<SkyBoxNode*>(sceneObjects[skybox_index])->decAmbient();
-	}
+	void IncrementDirLight(float dt);
+	void DecrementDirLight(float dt);
 
 private:
 

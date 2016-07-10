@@ -24,19 +24,19 @@ public:
 	PoliceBox(Shader* shader, Light*& l, Mesh* lightVol, Vector3 center, bool cleanUpMeshOnDelete);
 	virtual ~PoliceBox();
 
+	//Update the node.
 	virtual void Update(float msec);
+	//Draw this node.
 	virtual void DrawNode(bool shadowPass = false);
-	static void CreateBoxInstance();
-	static void DeleteBoxInstance();
 
-	inline int getNodeID(enum PB_ID p_id) const { return node_IDS[p_id]; }
-	inline SceneNode* getObjectRoot()			{ return children[ROOT]; }
-	inline float getOpacity()					{ incOpacity(); return opacity; }
-	inline void updatePos(Vector3& v)			{ pb_delta = v; }
+	/* Instantiate object mesh only once, to prevent loading from file multiple times. */
+	static void CreateBoxInstance();
+	/* Destroy object mesh. */
+	static void DeleteBoxInstance();
 
 protected:
 	static OBJMesh* policeBox;
-	void incOpacity();
+	void UpdateOpacity(float dt);
 	unsigned int node_IDS[PB_MAX_ID];
 
 	GLuint tardisTex_loc;

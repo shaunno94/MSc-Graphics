@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+Simple vertex shader, outputs vertex data to TCS.
+*/
+
 #version 420 core
 
 uniform mat4 modelMatrix;

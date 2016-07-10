@@ -1,8 +1,11 @@
+/*
+Author: Shaun Heald
+Simple vertex shader outputs position multiplied by MVP, outputs normal, colour, texture co-ordinate.
+*/
+
 #version 420 core
 
 uniform mat4 MVP;
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
 
 in vec3 position;
 in vec2 texCoord;

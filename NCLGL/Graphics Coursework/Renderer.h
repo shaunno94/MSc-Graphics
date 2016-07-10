@@ -1,6 +1,8 @@
 /*
 Author: Shaun Heald
-This class extends OGLRenderer, this class provides functionality to update and draw an arbitrary scene. 
+This class extends OGLRenderer, this class provides functionality to update and draw an arbitrary scene.
+This class holds frame buffer objects, textures that are used by the FBO's and shader programs required by this class.
+Rendering pipeline ==> Fill shadow map, fill G-buffer, compute lighting, combine the previous stages, compute any post-processing effects and present the final image.
 */
 
 #pragma once
@@ -81,7 +83,7 @@ protected:
 	bool wireframe = false;
 	bool blur = false;
 	//How many passes the post-processing blur effect will do.
-	const unsigned int blurSamples = 5;
+	const unsigned int blurSamples = 4;
 
 	/* Shader Uniform Handles. */
 	unsigned int light_depthTex_loc;

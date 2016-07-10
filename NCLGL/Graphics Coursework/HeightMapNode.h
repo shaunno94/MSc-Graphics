@@ -1,6 +1,7 @@
 /*
 Author: Shaun Heald
-
+This class extends Scene Node and represents the terrain in the demo scene.
+This class creates a heightmap mesh.
 */
 
 #pragma once
@@ -22,6 +23,7 @@ public:
 protected:	
 	const float SCALE = 20.0f;
 
+	/* Shader uniform handles. */
 	GLuint heightMapTex_loc;
 	GLuint heights_loc;
 	GLuint bump_loc;

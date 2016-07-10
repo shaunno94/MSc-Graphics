@@ -1,3 +1,10 @@
+/*
+Author: Shaun Heald
+Lake node tessellation evaluation shader. 
+Takes the newly generated primitive (quads) and appropriately calulcates the
+per vertex data ready for the fragment shader.
+*/
+
 #version 420 core
 
 uniform mat4 MVP;
@@ -30,6 +37,7 @@ out Vertex {
 	vec3 binormal;
 } OUT;
 
+//Linear interpolation - vec3 (for quads)
 vec3 lerp3(in vec3 v0, in vec3 v1, in vec3 v2, in vec3 v3)
 {
 	float u = gl_TessCoord.x;
@@ -39,6 +47,7 @@ vec3 lerp3(in vec3 v0, in vec3 v1, in vec3 v2, in vec3 v3)
 	return mix(a, b, v);
 }
 
+//Linear interpolation - vec2 (for quads)
 vec2 lerp2(in vec2 v0, in vec2 v1, in vec2 v2, in vec2 v3)
 {
 	float u = gl_TessCoord.x;
@@ -48,7 +57,7 @@ vec2 lerp2(in vec2 v0, in vec2 v1, in vec2 v2, in vec2 v3)
 	return mix(a, b, v);
 }
 
-const float scale = 2500.0;
+const float SCALE = 1700.0;
 
 void main(void)	
 {
@@ -63,12 +72,11 @@ void main(void)
 
 	vec3 combinedBN = normalize(lerp3(IN[0].binormal, IN[1].binormal, IN[2].binormal, IN[3].binormal));
 	
+	//Multiply the new texture co-ordinates by each texture height matrix and update the vertex Y, to make the water look more dynamic.
 	vec2 tmpTex = (heightMatrix * vec4(combinedTex, 0.0, 1.0)).xy;
 	vec2 tmpTex_2 = (heightMatrix_2 * vec4(combinedTex, 0.0, 1.0)).xy;
-	vec4 t0 = texture(waterHeights, tmpTex);
-	vec4 t1 = texture(waterHeights_2, tmpTex_2);
-	float val = mix((t0.r *scale), (t1.r *scale), 0.5);
-	//combinedPos.y += val;
+	float val = mix(texture(waterHeights, tmpTex).r, texture(waterHeights_2, tmpTex_2).r, 0.5);
+	combinedPos.y += val * SCALE;
 	
 	OUT.texCoord = (textureMatrix * vec4(combinedTex, 0.0, 1.0)).xy;
 	OUT.texCoord_noScale = (heightMatrix * vec4(combinedTex, 0.0, 1.0)).xy;
@@ -76,10 +84,7 @@ void main(void)
 	OUT.tangent = combinedTangent;
 	OUT.binormal = combinedBN;
 	OUT.worldPos = (modelMatrix * vec4(combinedPos, 1.0)).xyz;
-	OUT.worldPos.y += val;
 	OUT.colour = IN[0].colour;
 
 	gl_Position = MVP * vec4(combinedPos, 1.0);
-	gl_Position.y += val;
-	//gl_Position	= MVP * gl_Position;
 }

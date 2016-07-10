@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+Vertex shader for heightmap, samples a height texture and displaces Y accordingly.
+*/
+
 #version 420 core
 
 uniform sampler2D heights;
@@ -10,11 +15,14 @@ out Vertex
 	vec2 texCoord;
 } OUT;
 
+const float HEIGHT_SCALE = 2500.0f;
+
 void main(void)	
 {
-	//Displace Y values
-	vec4 texel = texture(heights, texCoord);
+	//Sample height texture.
+	float height = texture(heights, texCoord).r;
 	
 	OUT.texCoord = texCoord;
-	gl_Position = vec4(position.x, (texel.r * 2500), position.z, 1.0);
+	//Displace Y co-ordinate
+	gl_Position = vec4(position.x, (height * HEIGHT_SCALE), position.z, 1.0);
 }

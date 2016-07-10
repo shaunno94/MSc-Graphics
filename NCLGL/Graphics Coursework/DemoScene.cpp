@@ -39,8 +39,7 @@ DemoScene::DemoScene()
 	skybox_index = AddSceneObject(new SkyBoxNode(sceneShaderProgs[skybox_shader_index]));
 	heightmap_index = AddSceneObject(new HeightMapNode(sceneShaderProgs[heightmap_shader_index], heightMap_center));
 	envLight_index = AddSceneObject(new EnvLight(sceneShaderProgs[envLight_shader_index], heightMap_center), true);
-	AddSceneObject(new LakeNode(sceneShaderProgs[lake_shader_index], heightMap_center, sceneCamera, sceneObjects[skybox_index]->getTextureID(),
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->getEnvLight()));
+	AddSceneObject(new LakeNode(sceneShaderProgs[lake_shader_index], heightMap_center, sceneCamera, sceneObjects[skybox_index]->getTextureID()));
 	policeBox_index = AddSceneObject(new PoliceBox(sceneShaderProgs[policeBox_shader_index], pb_light, lightVol, heightMap_center, false));
 
 	sceneCamera->SetPosition(Vector3(heightMap_center.x, 1500.0f, heightMap_center.z));
@@ -112,7 +111,21 @@ void DemoScene::UpdateScene(float msec)
 	emitter->Update(msec);
 	//Upates the UI.
 	HUD->Update(msec);
-	Scene::UpdateScene(msec);
+	Scene::UpdateScene(msec);	
+	
+	//Build the view matrix from the lights point of view. The light is positioned high above the heightmap
+	//approximately at the center in x,z axes, and then rotated around the heightmap based on user input.
+	lightVM = Matrix4::Translation(Vector3(0, 0, -10000.0f)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
+		Matrix4::Rotation(sceneLightRot, Vector3(0.0f, 1.0f, 0.0f)) *
+		Matrix4::BuildViewMatrix(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f)) *
+		Matrix4::Translation(Vector3(-heightMap_center.x, 0.0f, -heightMap_center.z));
+
+	//Move the light to the correct position, taking the inverse of VM gives a model matrix and from that get the position.
+	static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(lightVM).GetPositionVector());
+	//Calculate the lights projection, view matrix which is multiplied by a bias matrix to shift the values into texture space (0.0 - 1.0).
+	static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (shadowPersp * lightVM));
+	//The cameras projection, view matrix 
+	static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowProjView(SceneNode::context->GetProjMat() * viewMatrix);
 }
 
 void DemoScene::DrawScene(bool shadowPass, bool lightPass)
@@ -121,30 +134,18 @@ void DemoScene::DrawScene(bool shadowPass, bool lightPass)
 	{
 		SceneNode::context->UpdateProjMatrix(shadowPersp);
 
-		//Build the view matrix from the lights point of view. The light is positioned high above the heightmap
-		//approximately at the center in x,z axes, and then rotated around the heightmap based on user input.
-		lightVM = Matrix4::Translation(Vector3(0, 0, -10000.0f)) * Matrix4::Rotation(90.0f, Vector3(0, 0, 1)) *
-			Matrix4::Rotation(sceneLightRot, Vector3(0.0f, 1.0f, 0.0f)) *
-			Matrix4::BuildViewMatrix(Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f)) *
-			Matrix4::Translation(Vector3(-heightMap_center.x, 0.0f, -heightMap_center.z));
-
 		//The lights view matrix will be used when drawing objects during the shadow pass.
 		SceneNode::context->UpdateViewMatrix(lightVM);
-
-		//Move the light to the correct position, taking the inverse of VM gives a model matrix and from that get the position.
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setPos(Matrix4::Inverse(lightVM).GetPositionVector());
-		//Calculate the lights projection, view matrix which is multiplied by a bias matrix to shift the values into texture space (0.0 - 1.0).
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowMatrix(biasMatrix * (shadowPersp * lightVM));
 	}
 	
 	Scene::DrawScene(shadowPass, lightPass);
 
 	if (shadowPass)
 	{
+		//Switch back to a standard projection matrix.
 		SceneNode::context->SwitchToPerspective();
-		//The cameras projection, view matrix 
-		static_cast<EnvLight*>(sceneObjects[envLight_index])->setShadowProjView(SceneNode::context->GetProjMat() * viewMatrix);
 		
+		//Switch view matrix back to the camera if 'viewLight' is false.
 		if (!viewLight)
 			SceneNode::context->UpdateViewMatrix(viewMatrix);
 	}	
@@ -160,4 +161,24 @@ void DemoScene::LateDraw()
 	//Draw the UI.
 	HUD->Draw();
 	Scene::LateDraw();
+}
+
+void DemoScene::IncrementDirLight(float dt)
+{
+	sceneLightRot += 2.0f;
+
+	if (sceneLightRot > 360.0f)
+		sceneLightRot = 0.0f;
+
+	static_cast<SkyBoxNode*>(sceneObjects[skybox_index])->incAmbient();
+}
+
+void DemoScene::DecrementDirLight(float dt) 
+{
+	sceneLightRot -= 2.0f;
+
+	if (sceneLightRot < 0.0f)
+		sceneLightRot = 360.0f;
+
+	static_cast<SkyBoxNode*>(sceneObjects[skybox_index])->decAmbient();
 }

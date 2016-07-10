@@ -24,7 +24,7 @@ Mesh::Mesh()
 	indices = nullptr;
 	numIndices = 0;
 	modelMatrix = Matrix4::Translation(position);
-	shine_factor = 0.0f;
+	specularFactor = 0.0f;
 }
 
 Mesh::~Mesh()
@@ -67,7 +67,7 @@ void Mesh::GenerateNormals()
 	}
 	else
 	{
-		for (GLuint i = 0; i < numVertices; i += 3)
+		for (unsigned int i = 0; i < numVertices; i += 3)
 		{
 			Vector3 &a = vertices[i];
 			Vector3 &b = vertices[i + 1];
@@ -92,20 +92,20 @@ void Mesh::GenerateTangents()
 	{
 		tangents = new Vector3[numVertices];
 	}
-	for (GLuint i = 0; i < numVertices; ++i)
+	for (unsigned int i = 0; i < numVertices; ++i)
 	{
 		tangents[i] = Vector3();
 	}
 	if (indices) 
 	{
-		for (GLuint i = 0; i < numIndices; i += 3){
-			int a = indices[i];
-			int b = indices[i + 1];
-			int c = indices[i + 2];
+		for (unsigned int i = 0; i < numIndices; i += 3)
+		{
+			unsigned int a = indices[i];
+			unsigned int b = indices[i + 1];
+			unsigned int c = indices[i + 2];
 			
 			Vector3 tangent = GenerateTangent(vertices[a], vertices[b],
-				vertices[c], textureCoords[a],
-				textureCoords[b], textureCoords[c]);
+				vertices[c], textureCoords[a], textureCoords[b], textureCoords[c]);
 			
 			tangents[a] += tangent;
 			tangents[b] += tangent;
@@ -114,7 +114,8 @@ void Mesh::GenerateTangents()
 	}
 	else 
 	{
-		for (GLuint i = 0; i < numVertices; i += 3){
+		for (unsigned int i = 0; i < numVertices; i += 3)
+		{
 			Vector3 tangent = GenerateTangent(vertices[i], vertices[i + 1],
 				vertices[i + 2], textureCoords[i],
 				textureCoords[i + 1], textureCoords[i + 2]);
@@ -124,7 +125,7 @@ void Mesh::GenerateTangents()
 			tangents[i + 2] += tangent;
 		}
 	}
-	for (GLuint i = 0; i < numVertices; ++i)
+	for (unsigned int i = 0; i < numVertices; ++i)
 	{
 		tangents[i].Normalise();
 	}
@@ -149,6 +150,7 @@ Mesh* Mesh::GenerateTriangle()
 {
 	Mesh* m = new Mesh();
 	m->numVertices = 3;
+	m->patchVerts = 3;
 
 	m->vertices = new Vector3[m->numVertices];
 	m->vertices[0] = Vector3(0.0f, 0.5f, -2.0f);
@@ -232,6 +234,7 @@ void Mesh::BufferData()
 	glVertexAttribPointer(VERTEX_BUFFER, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(VERTEX_BUFFER);
 	Mesh::bytes_used += sizeof(Vector3)* numVertices;
+
 	if (textureCoords)
 	{
 		glGenBuffers(1, &bufferObject[TEXTURE_BUFFER]);

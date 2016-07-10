@@ -1,15 +1,17 @@
 #include "LakeNode.h"
 
-LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID, Light* l)
+LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID)
 	: SceneNode(Mesh::GenerateQuad(true), Vector4(1, 1, 1, 1), shader, true)
 {
+	//GL primitive type is patches because this node uses tessellation.
 	mesh->updateType(GL_PATCHES);
 	
+	/* Load textures. */
 	mesh->SetTexture(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water.jpg").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
 	OGLRenderer::SetTextureRepeating(mesh->GetTexture(), true);
 
 	mesh->SetBumpMap(SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water_NRM.jpg").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0));
-	OGLRenderer::SetTextureRepeating(mesh->getBumpMap(), true);	
+	OGLRenderer::SetTextureRepeating(mesh->GetBumpMap(), true);	
 
 	water_height = SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water_height.png").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::SetTextureRepeating(water_height, false);
@@ -17,7 +19,7 @@ LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID,
 	water_height2 = SOIL_load_OGL_texture((File_Locs::TEXTURE_DIR + "water_height2.png").c_str(), SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::SetTextureRepeating(water_height, false);
 
-	if (!mesh->GetTexture() || !mesh->getBumpMap())
+	if (!mesh->GetTexture() || !mesh->GetBumpMap())
 	{
 		cout << "Initialisation failed...Lake texture failed to load." << endl;
 		system("pause");
@@ -31,9 +33,11 @@ LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID,
 		exit(1);
 	}
 
+	//Set the position and scale.
 	mesh->setModelMatrix(Matrix4::Translation(Vector3(offset.x + 400, 400.0f, offset.z + 400)) *
 		Matrix4::Scale(Vector3(offset.x - (offset.x / 2.6f), 1.0f, offset.z - (offset.z / 2.5f))));
 
+	/* Shader uniform locations. */
 	cameraPos_loc = nodeShader->GetUniformLocation("cameraPos");
 	diffuseTex_loc = nodeShader->GetUniformLocation("diffuseTex");
 	cubeTex_loc = nodeShader->GetUniformLocation("cubeTex");
@@ -45,19 +49,18 @@ LakeNode::LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID,
 
 	camera = cam;
 	skybox_tex = SB_texID;
-	envLight = l;
 }
 
 LakeNode::~LakeNode()
 {}
 
+/* Set OpenGL state, update shader uniforms, setup texture units, update matrices and draw this node. */
 void LakeNode::DrawNode(bool shadowPass)
 {
 	if (mesh)
 	{
-		//glDisable(GL_CULL_FACE);
+		glDisable(GL_CULL_FACE);
 		context->SetCurrentShader(nodeShader);
-		context->SetShaderLight(envLight);
 
 		glUniform3fv(cameraPos_loc, 1, (float*)&camera->GetPosition());
 		glUniform1i(diffuseTex_loc, 0);
@@ -81,13 +84,13 @@ void LakeNode::DrawNode(bool shadowPass)
 		context->UpdateShaderMatrices();
 
 		mesh->Draw();
-		//glEnable(GL_CULL_FACE);
+		glEnable(GL_CULL_FACE);
 	}
 }
 
+//Update the node - slowly rotate the lake nodes heightmap textures.
 void LakeNode::Update(float msec)
 {
-	//SceneNode::Update(msec);
 	waterRot += msec / 1000.0f;
 	if (waterRot > 360.0f)
 		waterRot = 0.0f;

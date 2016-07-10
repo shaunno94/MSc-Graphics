@@ -1,17 +1,8 @@
 #pragma once
 /*
-Class:OGLRenderer
-Author:Rich Davison	<richard.davison4@newcastle.ac.uk>
-Description:Abstract base class for the graphics tutorials. Creates an OpenGL 
-3.2 CORE PROFILE rendering context. Each lesson will create a renderer that 
-inherits from this class - so all context creation is handled automatically,
-but students still get to see HOW such a context is created.
-
--_-_-_-_-_-_-_,------,   
-_-_-_-_-_-_-_-|   /\_/\   NYANYANYAN
--_-_-_-_-_-_-~|__( ^ .^) /
-_-_-_-_-_-_-_-""  ""   
-
+Class: OGLRenderer
+Author: Rich Davison
+Description: Abstract base class. Creates an OpenGL rendering context.
 */
 #include "Common.h"
 
@@ -31,9 +22,6 @@ _-_-_-_-_-_-_-""  ""
 #include "Matrix4.h"
 #include "Window.h"
 #include "Light.h"
-
-#include "Shader.h"		
-#include "Mesh.h"
 
 using std::vector;
 
@@ -97,6 +85,8 @@ protected:
 	Matrix4 MVP;			//Combined model, view, projection matrix
 	Matrix4 VP;				//View Projection matrix
 	Matrix4 textureMatrix;	//Texture matrix
+	Matrix4 orthoMatrix;	//Standard orthographic matrix.
+	Matrix4 perspMatrix;	//Standard perspective matrix.
 
 	int		width;			//Render area width (not quite the same as window width)
 	int		height;			//Render area height (not quite the same as window height)
@@ -111,5 +101,4 @@ protected:
 	const float FAR_PLANE = 15000.0f;
 
 	Vector2 pixelPitch;
-
 };

@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+Main entry point to program.
+*/
+
 #include "Renderer.h"
 #include <nclgl\common.h>
 #include "DemoScene.h"
@@ -10,6 +15,7 @@ int main()
 {
 	ResolveDirectory();
 
+	//Create the window for the OpenGL context.
 	Window window("Graphics Coursework (Shaun Heald)", 1280, 720, false);
 	window.LockMouseToWindow(true);
 	window.ShowOSPointer(false);
@@ -21,6 +27,7 @@ int main()
 		return -1;
 	}
 
+	//Create the renderer context.
 	Renderer renderer(window);
 
 	if (!renderer.HasInitialised())
@@ -30,52 +37,23 @@ int main()
 		return -1;
 	}
 
+	//Initialise a scene and pass it to the renderer for drawing.
 	DemoScene* demo = new DemoScene();
 	renderer.SetCurrentScene(demo);
 
-	Vector3 policeBox_pos = Vector3(0,0,0);
 	float dt = 0.001f;
 
+	//Main game loop.
 	while (window.UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE))
 	{
 		dt = window.GetTimer()->GetTimedMS();
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_I))
-		{
-			policeBox_pos.x += 10.0f;
-			demo->SetPosition(policeBox_pos);
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_K))
-		{
-			policeBox_pos.x -= 10.0f;
-			demo->SetPosition(policeBox_pos);
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_J))
-		{
-			policeBox_pos.z -= 10.0f;
-			demo->SetPosition(policeBox_pos);
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_L))
-		{
-			policeBox_pos.z += 10.0f;
-			demo->SetPosition(policeBox_pos);
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_U))
-		{
-			policeBox_pos.y += 10.0f;
-			demo->SetPosition(policeBox_pos);
-		}
-		if (Window::GetKeyboard()->KeyDown(KEYBOARD_O))
-		{
-			policeBox_pos.y -= 10.0f;
-			demo->SetPosition(policeBox_pos);
-		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_1))
 		{
-			demo->decDirLight(dt);
+			demo->DecrementDirLight(dt);
 		}
 		if (Window::GetKeyboard()->KeyDown(KEYBOARD_2))
 		{
-			demo->incDirLight(dt);
+			demo->IncrementDirLight(dt);
 		}
 		if (Window::GetKeyboard()->KeyTriggered(KEYBOARD_P))
 		{
@@ -90,7 +68,6 @@ int main()
 			renderer.ToggleBlur();
 			demo->toggleBlur();
 		}
-		policeBox_pos.ToZero();
 		renderer.RenderScene(dt);
 	}
 
@@ -100,6 +77,7 @@ int main()
 	return 0;
 }
 
+//Get the path to the texture, shader and mesh folders.
 void ResolveDirectory()
 {
 	string topDir = "NCLGL\\";

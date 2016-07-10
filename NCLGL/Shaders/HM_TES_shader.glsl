@@ -1,3 +1,10 @@
+/*
+Author: Shaun Heald
+Heightmap node tessellation evaluation shader.
+Takes the newly generated primitive (triangles) and appropriately calulcates the
+per vertex data ready for the fragment shader.
+*/
+
 #version 420 core
 
 uniform mat4 MVP;
@@ -20,6 +27,7 @@ out Vertex {
 	vec3 binormal;
 } OUT;
 
+//Linear interpolation - vec3 (for triangles)
 vec3 lerp3(in vec3 v1, in vec3 v2, in vec3 v3)
 {
 	vec3 p0 = gl_TessCoord.x * v1;
@@ -28,6 +36,7 @@ vec3 lerp3(in vec3 v1, in vec3 v2, in vec3 v3)
 	return p0 + p1 + p2;
 }
 
+//Linear interpolation - vec2 (for triangles)
 vec2 lerp2(in vec2 v1, in vec2 v2, in vec2 v3)
 {
 	vec2 p0 = gl_TessCoord.x * v1;
@@ -40,13 +49,10 @@ void main(void)
 {
 	vec3 combinedPos = lerp3(gl_in[0].gl_Position.xyz, gl_in[1].gl_Position.xyz, 
 				gl_in[2].gl_Position.xyz);
-
 	vec2 combinedTex = lerp2(IN[0].texCoord, IN[1].texCoord, IN[2].texCoord);
 
 	vec3 combinedNormal = normalize(lerp3(IN[0].normal, IN[1].normal, IN[2].normal));
-
 	vec3 combinedTangent = normalize(lerp3(IN[0].tangent, IN[1].tangent, IN[2].tangent));
-
 	vec3 combinedBN = normalize(lerp3(IN[0].binormal, IN[1].binormal, IN[2].binormal));
 	
 	OUT.texCoord = combinedTex;

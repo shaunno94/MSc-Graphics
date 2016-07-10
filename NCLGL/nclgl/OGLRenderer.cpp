@@ -5,8 +5,8 @@ Description:Abstract base rendering class. Creates an OpenGL
 CORE PROFILE rendering context.
 */
 
-
 #include "OGLRenderer.h"
+#include "Shader.h"	
 unsigned int	OGLRenderer::bytes_used = 0;
 
 /*
@@ -127,6 +127,8 @@ OGLRenderer::OGLRenderer(Window &window)
 	window.SetRenderer(this);					//Tell our window about the new renderer! (Which will in turn resize the renderer window to fit...)
 
 	pixelPitch = Vector2(1.0f / float(width), 1.0f / float(height));
+	orthoMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);
+	perspMatrix = Matrix4::Perspective(NEAR_PLANE, FAR_PLANE, float(width) / float(height), FOV);
 }
 
 /*
@@ -245,12 +247,12 @@ void OGLRenderer::SetCubeMapParams(GLuint target)
 void OGLRenderer::SwitchToOrtho()
 {
 	//projMatrix = Matrix4::Orthographic(-NEAR_PLANE, FAR_PLANE, width / 2.0f, -width / 2.0f, height / 2.0f, -height / 2.0f);
-	projMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);
+	projMatrix = orthoMatrix;
 }
 
 void OGLRenderer::SwitchToPerspective()
 {
-	projMatrix = Matrix4::Perspective(NEAR_PLANE, FAR_PLANE, float(width) / float(height), FOV);
+	projMatrix = perspMatrix;
 }
 
 void OGLRenderer::SetShaderLight(Light* l) 

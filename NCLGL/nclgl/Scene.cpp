@@ -39,14 +39,16 @@ unsigned int Scene::AddSceneObject(SceneNode* node, bool dirLight)
 {
 	sceneObjects.push_back(node);
 
+	//Store a pointer to the directional light in another vector for faster drawing of directional lights.
 	if (dirLight)
-		lightIndex.push_back(sceneObjects.size() - 1);
+		lightIndex.push_back(node);
 
 	return sceneObjects.size() - 1;
 }
 
 unsigned int Scene::AddShaderProgram(Shader* shader)
 {
+	//Check if the shader program has compiled/linked.
 	if (!shader->LinkProgram())
 	{
 		cout << "Initialisation failed...A shader program (" << shader->GetProgramName() << ") failed to compile." << endl;
@@ -64,7 +66,7 @@ void Scene::UpdateScene(float msec)
 	viewMatrix = sceneCamera->BuildViewMatrix();
 	SceneNode::context->UpdateViewMatrix(viewMatrix);
 
-	for (int i = 0; i < sceneObjects.size(); i++)
+	for (unsigned int i = 0; i < sceneObjects.size(); i++)
 	{
 		sceneObjects[i]->Update(msec);
 	}
@@ -78,9 +80,11 @@ void Scene::DrawScene(bool shadowPass, bool lightPass)
 		{
 			if (shadowPass)
 			{
+				//Only draw objects which cast a shadow.
 				if (sceneObjects[i]->IsShadowCaster())
 					sceneObjects[i]->DrawNode(shadowPass);
 			}
+			//Draw everything except directional lights.
 			else if (!sceneObjects[i]->IsDirectionalLight())
 			{
 				sceneObjects[i]->DrawNode(shadowPass);
@@ -89,14 +93,12 @@ void Scene::DrawScene(bool shadowPass, bool lightPass)
 	}
 	else
 	{
+		//Only draws directional lights.
 		for (unsigned int i = 0; i < lightIndex.size(); i++)
 		{
-			sceneObjects[lightIndex[i]]->DrawNode();
+			lightIndex[i]->DrawNode();
 		}
 	}
 }
 
-void Scene::LateDraw()
-{
-
-}
+void Scene::LateDraw() {}

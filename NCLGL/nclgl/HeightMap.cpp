@@ -2,19 +2,25 @@
 
 HeightMap::HeightMap(const char* file, const char* heights_nrm, float scale, const char* baseTex, const char* bumpMapTex)
 {
-	ifstream inFile(file, ios::binary);
+	std::ifstream inFile(file, std::ios::binary);
 	if (!inFile)
 	{
-		cout << "Heightmap data file not found." << endl;
+		std::cout << "Heightmap data file not found." << std::endl;
 		system("pause");
 		exit(1);
 	}
+
 	numVertices = RAW_WIDTH * RAW_HEIGHT;
 	numIndices = (RAW_WIDTH * RAW_HEIGHT) * 6;
 	vertices = new Vector3[numVertices];
 	textureCoords = new Vector2[numVertices];
 	indices = new GLuint[numIndices];
 	heightmap_scale = scale;
+
+	/*
+	Generate a grid of vertex data along the X and Z axes. Note the Y is displaced in the
+	shader by sampling a heightmap texture.
+	*/
 	for (int x = 0; x < RAW_WIDTH; ++x) 
 	{
 		for (int z = 0; z < RAW_HEIGHT; ++z) 
@@ -25,6 +31,7 @@ HeightMap::HeightMap(const char* file, const char* heights_nrm, float scale, con
 		}
 	}
 
+	//Compute indices
 	numIndices = 0;
 	for (int x = 0; x < RAW_WIDTH - 1; ++x) 
 	{
@@ -40,6 +47,7 @@ HeightMap::HeightMap(const char* file, const char* heights_nrm, float scale, con
 		}
 	}
 
+	/* Load texture data. */
 	height_data = SOIL_load_OGL_texture(file, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
 	OGLRenderer::SetTextureRepeating(height_data, false);
 	
@@ -62,14 +70,15 @@ HeightMap::HeightMap(const char* file, const char* heights_nrm, float scale, con
 	OGLRenderer::SetTextureFiltering(grassTex, true, true);
 
 	modelMatrix = Matrix4::Translation(Vector3(0, 0, 0));
-	shine_factor = 15.0f;
+	specularFactor = 15.0f;
 	type = GL_PATCHES;
 	patchVerts = 3;
-	//GenerateNormals();
-	//GenerateTangents();
+
+	//Pass data to OpenGL 
 	BufferData();
 }
 
+/* Bind textures, draw mesh. */
 void HeightMap::Draw()
 {
 	glActiveTexture(GL_TEXTURE2);

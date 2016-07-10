@@ -3,7 +3,6 @@
 SkyBoxNode::SkyBoxNode(Shader* shader)
 	: SceneNode(Mesh::GenerateQuad(), Vector4(1, 1, 1, 1), shader, true)
 {
-	//mesh = Mesh::GenerateQuad();
 	//Skybox texture - cube map: left, right, top, bottom, front, back
 	mesh->SetTexture(SOIL_load_OGL_cubemap((File_Locs::TEXTURE_DIR + "ThickCloudsWaterLeft.png").c_str(), 
 		(File_Locs::TEXTURE_DIR + ("ThickCloudsWaterRight.png")).c_str(),
@@ -34,6 +33,7 @@ void SkyBoxNode::Update(float msec)
 	SceneNode::Update(msec);
 }
 
+/* Set OpenGL state, update shader uniforms, update matrices and draw this node. */
 void SkyBoxNode::DrawNode(bool shadowPass)
 {
 	if (mesh)

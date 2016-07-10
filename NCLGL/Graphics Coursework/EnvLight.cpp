@@ -14,25 +14,32 @@ EnvLight::EnvLight(Shader* shader, Vector3 pos)
 
 EnvLight::~EnvLight()
 {
-	delete dirLight;
-	dirLight = nullptr;
+	if (dirLight)
+	{
+		delete dirLight;
+		dirLight = nullptr;
+	}
 }
 
+/* Set OpenGL state, update shader uniforms, update matrices and draw this node. */
 void EnvLight::DrawNode(bool shadowPass)
 {
-	glDisable(GL_CULL_FACE);
-	context->SwitchToOrtho();
+	if (mesh)
+	{
+		glDisable(GL_CULL_FACE);
+		context->SwitchToOrtho();
 
-	glUniform1i(dir_loc, 1);
-	glUniformMatrix4fv(shadowVP_loc, 1, false, (float*)&Matrix4::Inverse(shadowVP));
-	glUniformMatrix4fv(shadowMatrix_loc, 1, false, (float*)&shadowProj);
+		glUniform1i(dir_loc, 1);
+		glUniformMatrix4fv(shadowVP_loc, 1, false, (float*)&Matrix4::Inverse(shadowVP));
+		glUniformMatrix4fv(shadowMatrix_loc, 1, false, (float*)&shadowProj);
 
-	context->SetShaderLight(dirLight);
-	context->UpdateShaderMatrices();
+		context->SetShaderLight(dirLight);
+		context->UpdateShaderMatrices();
 
-	mesh->Draw();
-	glEnable(GL_CULL_FACE);
-	context->SwitchToPerspective();
+		mesh->Draw();
+		glEnable(GL_CULL_FACE);
+		context->SwitchToPerspective();
+	}
 }
 
 void EnvLight::Update(float msec)

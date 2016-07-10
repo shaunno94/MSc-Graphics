@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+Simple vertex shader used for drawing a full screen quad with ortho projection.
+*/
+
 #version 420 core
 
 uniform mat4 projMatrix;

@@ -1,6 +1,6 @@
 /*
 Author: Shaun Heald
-
+This class extends Scene Node and represents the skybox object in the demo scene.
 */
 
 #pragma once

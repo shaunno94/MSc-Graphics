@@ -1,3 +1,9 @@
+/*
+Author: Shaun Heald
+Simple fragment shader, can sample from texture or use colour to compute fragment colour.
+Outputs normal to texture to be used for lighting calculations.
+*/
+
 #version 420 core
 
 uniform sampler2D tardisTex;
@@ -26,7 +32,10 @@ void main(void)
 	{
 		diffuseColour = texture(tardisTex, IN.texCoord);
 	}
+
+	//Alpha
 	diffuseColour.a = opacity;
+	//Scale and bias normal to the range 0 - 1 becuase it is being stored in a texture.
 	outNormal = vec4((IN.normal.xyz * 0.5) + 0.5, 1.0);
 	irradiance = vec4(0.8, 60.0, 0.0, opacity);
 }

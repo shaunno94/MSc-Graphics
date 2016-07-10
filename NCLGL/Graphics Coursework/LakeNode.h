@@ -1,6 +1,7 @@
 /*
 Author: Shaun Heald
-
+This class extends Scene Node and represents the 'lake' in the demo scene.
+This class holds some extra textures & matrices which are used to dynamically alter the appearance of the object.
 */
 
 #pragma once
@@ -10,7 +11,7 @@ Author: Shaun Heald
 class LakeNode : public SceneNode
 {
 public:
-	LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID, Light* l);
+	LakeNode(Shader* shader, Vector3 offset, Camera* cam, GLuint SB_texID);
 	virtual ~LakeNode();
 
 	virtual void Update(float msec);
@@ -33,9 +34,8 @@ protected:
 	Matrix4 heightMatrix;
 	Matrix4 heightMatrix2;
 
-	GLuint skybox_tex;
-
 	float waterRot = 0.0f;
+	//Camera and skybox texture required to calculate the reflection colour.
 	Camera* camera;
-	Light* envLight;
+	GLuint skybox_tex;
 };

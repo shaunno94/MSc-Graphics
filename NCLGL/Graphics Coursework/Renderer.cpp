@@ -120,6 +120,8 @@ Renderer::~Renderer()
 {
 	delete screenQuad;
 	screenQuad = nullptr; 	
+	currentShader = nullptr;
+	currentScene = nullptr;
 
 	for (unsigned int i = 0; i < TOTAL_SHADERS; ++i)
 	{
@@ -127,12 +129,12 @@ Renderer::~Renderer()
 		shaderProgs[i] = nullptr;
 	}
 
-	shaderProgs.clear();
-	currentShader = nullptr;
+	shaderProgs.clear();	
 	glDeleteFramebuffers(TOTAL_FBO, fbo.data());
 	glDeleteTextures(TOTAL_TEX, fbo_tex.data());
 }
 
+/* Get all uniform location handles. */
 void Renderer::InitShaderUniformLocations()
 {
 	light_depthTex_loc = shaderProgs[LIGHT_SHADER]->GetUniformLocation("depthTex");
@@ -159,6 +161,7 @@ void Renderer::InitShaderUniformLocations()
 	blur_diffuseTex_loc = shaderProgs[BLUR_SHADER]->GetUniformLocation("diffuseTex");
 }
 
+/* Generate & setup textures that will be used as FBO attatchments. */
 void Renderer::GenerateTexture(GLuint& target, bool depth, bool shadow, bool clamp)
 {
 	glGenTextures(1, &target);
@@ -193,6 +196,7 @@ void Renderer::GenerateShadowFBO(GLuint FBO, GLuint target)
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, target, 0);
 	glDrawBuffer(GL_NONE);
+
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
 		cout << "Initialisation failed...Shadow FBO was not created." << endl;
@@ -204,14 +208,18 @@ void Renderer::GenerateShadowFBO(GLuint FBO, GLuint target)
 
 void Renderer::RenderScene(float msec)
 {
+	//Clear back buffer for next frame.
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
+	//If there is a scene attatched update and render it.
 	if (currentScene)
 	{
 		UpdateScene(msec);	
 
 		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
-		FillBuffers();
+		FillBuffers(); //Fill G-buffer
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 		DrawLights();
 		DrawCombinedScene();
 		DrawPostProcess();
@@ -228,7 +236,9 @@ void Renderer::UpdateScene(float msec)
 
 void Renderer::FillBuffers()
 {
+	//Fill shadow map.
 	DrawShadowScene();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[BUFFER_FBO]);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -243,8 +253,10 @@ void Renderer::DrawLights()
 	SetCurrentShader(shaderProgs[LIGHT_SHADER]);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[POINT_LIGHT_FBO]);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	//Additive blending
 	glBlendFunc(GL_ONE, GL_ONE);
 
+	/* Update shader uniforms. */
 	glUniform1i(light_depthTex_loc, 5);
 	glUniform1i(light_normalTex_loc, 6);
 	glUniform1i(light_shadowTex_loc, 7);
@@ -253,6 +265,7 @@ void Renderer::DrawLights()
 	glUniform1i(light_irradianceTex_loc, 13);
 	glUniformMatrix4fv(light_invProjView_loc, 1, false, (float*)&Matrix4::Inverse(projMatrix * viewMatrix));
 
+	/* Bind textures. */
 	glActiveTexture(GL_TEXTURE5);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[BUF_DEPTH_TEX]);
 	glActiveTexture(GL_TEXTURE6);
@@ -264,7 +277,8 @@ void Renderer::DrawLights()
 	
 	DrawPointLights();
 	currentScene->DrawScene(false, true);
-		
+
+	//Reset state
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -273,13 +287,16 @@ void Renderer::DrawLights()
 
 void Renderer::DrawPointLights()
 {
+	//Not a directional light
 	glUniform1i(light_directional_loc, 0);
 
+	//Loop through the current scenes point lights and draw them.
 	for (unsigned int i = 0; i < currentScene->GetNumberOfPointLights(); ++i)
 	{
 		Light* l = currentScene->GetPointLight(i);
 		float radius = l->getRadius();
 		Vector3 offset = l->getOffset();
+
 		if (!l->getIsStatic())
 		{
 			modelMatrix = Matrix4::Translation(offset) * Matrix4::Rotation(1.0f, Vector3(0, 1, 0)) * Matrix4::Translation(-offset) *
@@ -290,6 +307,8 @@ void Renderer::DrawPointLights()
 		{ 
 			modelMatrix = Matrix4::Translation(l->getPos()) * Matrix4::Scale(Vector3(radius, radius, radius));
 		}
+
+		//Check if the camera is inside the light volume.
 		if ((l->getPos() - currentScene->GetSceneCamera()->GetPosition()).Length() < radius)
 		{
 			glCullFace(GL_FRONT);
@@ -298,6 +317,7 @@ void Renderer::DrawPointLights()
 		{
 			glCullFace(GL_BACK);
 		}
+
 		SetShaderLight(l);
 		UpdateShaderMatrices();
 		l->Draw();
@@ -306,29 +326,37 @@ void Renderer::DrawPointLights()
 
 void Renderer::DrawShadowScene()
 {
+	//Front face culling to try and reduce shadow artefacts.
 	glCullFace(GL_FRONT);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[SHADOW_FBO]);
+
+	//Update OpenGL's viewport to the size of the shadow map.
 	glViewport(0, 0, SHADOW_SIZE, SHADOW_SIZE);
+
+	//Turn off writing to colour attatchments.
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	currentScene->DrawScene(true);
 
-	glUseProgram(0);
+	//Reset state	
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glViewport(0, 0, width, height);
+	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
 }
 
 void Renderer::DrawCombinedScene()
 {
+	SwitchToOrtho();
+
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[COMBINE_FBO]);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
 	SetCurrentShader(shaderProgs[COMBINE_SHADER]);
-	projMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);
 
+	/* Update shader uniforms. */
 	glUniformMatrix4fv(combine_projMatrix_loc, 1, false, (float*)&projMatrix);
 	glUniform1i(combine_diffuseTex_loc, 2);
 	glUniform1i(combine_emissiveTex_loc, 3);
@@ -337,30 +365,27 @@ void Renderer::DrawCombinedScene()
 	glUniform1i(combine_reflTex_loc, 14);
 	glUniform1i(combine_finalRender_loc, 0);
 
+	/* Bind textures. */
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[BUF_COLOUR_TEX]);
-
 	glActiveTexture(GL_TEXTURE3);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[LIGHT_EMISSIVE_TEX]);
-
 	glActiveTexture(GL_TEXTURE4);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[LIGHT_SPECULAR_TEX]);
-
 	glActiveTexture(GL_TEXTURE13);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[IRRADIANCE_TEX]);
-
 	glActiveTexture(GL_TEXTURE14);
 	glBindTexture(GL_TEXTURE_2D, fbo_tex[BUF_REFL_TEX]);
 
 	screenQuad->Draw();
-	SwitchToPerspective();
 	glUseProgram(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	SwitchToPerspective();
 }
 
 void Renderer::DrawPostProcess()
 {
-	projMatrix = Matrix4::Orthographic(-1, 1, 1, -1, -1, 1);	
+	SwitchToOrtho();
 
 	if (blur)
 	{
@@ -370,34 +395,45 @@ void Renderer::DrawPostProcess()
 		SetCurrentShader(shaderProgs[BLUR_SHADER]);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO], 0);
+		/* Update shader uniforms. */
 		glUniformMatrix4fv(blur_projMatrix_loc, 1, false, (float*)&projMatrix);
 		glUniform2f(blur_pixelSize_loc, pixelPitch.x, pixelPitch.y);
 		glDisable(GL_DEPTH_TEST);
 
-		for (int i = 0; i < 4; ++i)
+		//Progressively blur the image over a number of passes.
+		//Using 'ping-pong' texture technique - the result of a pass is used as the input of the next pass.
+		for (int i = 0; i < blurSamples; ++i)
 		{
+			//Bind MOTION_BLUR_TWO to the FBO for writing.
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO], 0);
 
+			/* Update shader uniforms. */
 			glUniform1i(blur_isVertical_loc, 0);
 			glUniform1i(blur_diffuseTex_loc, 22);
 
+			//Intially the source texture is the combined image (albedo, lighting, shadows etc)
 			if (i == 0)
 			{
+				/* Bind texture. */
 				glActiveTexture(GL_TEXTURE22);
 				glBindTexture(GL_TEXTURE_2D, fbo_tex[COMBINED_TEX]);
 			}
 			else
 			{
+				/* Bind texture. */
 				glActiveTexture(GL_TEXTURE22);
 				glBindTexture(GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_ONE]);
 			}
 			screenQuad->Draw();
 
+			/* Update shader uniforms. */
 			glUniform1i(blur_isVertical_loc, 1);
 			glUniform1i(blur_diffuseTex_loc, 23);
 
+			//Bind MOTION_BLUR_ONE to the FBO for writing.
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_ONE], 0);
 
+			/* Bind texture. */
 			glActiveTexture(GL_TEXTURE23);
 			glBindTexture(GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_TWO]);
 			screenQuad->Draw();
@@ -408,16 +444,20 @@ void Renderer::DrawPostProcess()
 	}
 
 	SetCurrentShader(shaderProgs[COMBINE_SHADER]);
+
+	/* Update shader uniforms. */
 	glUniform1i(combine_finalRender_loc, 1);
 	glUniform1i(combine_diffuseTex_loc, 2);
 	glUniform1i(combine_blurTex_loc, 26);
 	glUniformMatrix4fv(combine_projMatrix_loc, 1, false, (float*)&projMatrix);
 	glActiveTexture(GL_TEXTURE26);
 
+	//If blur was enabled present the result to screen.
 	if (blur)
 	{
 		glBindTexture(GL_TEXTURE_2D, fbo_tex[MOTION_BLUR_ONE]);
 	}
+	//Present the combined image without post-processing.
 	else
 	{
 		glBindTexture(GL_TEXTURE_2D, fbo_tex[COMBINED_TEX]);
@@ -426,6 +466,6 @@ void Renderer::DrawPostProcess()
 	screenQuad->Draw();
 	currentScene->LateDraw();
 
-	SwitchToPerspective();
 	glUseProgram(0);
+	SwitchToPerspective();
 }

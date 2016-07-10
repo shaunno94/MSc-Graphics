@@ -2,10 +2,11 @@
 
 HeightMapNode::HeightMapNode(Shader* shader, Vector3& hm_center)
 {
+	//Create a new heightmap by loading data from file.
 	mesh = new HeightMap((File_Locs::TEXTURE_DIR + "Heightmap.jpg").c_str(), (File_Locs::TEXTURE_DIR + "Heights_NRM.jpg").c_str(),
 		SCALE, (File_Locs::TEXTURE_DIR + "rockyTex.jpg").c_str(), (File_Locs::TEXTURE_DIR + "Heightmap_NRM.jpg").c_str());
 	
-	if (!mesh->GetTexture() || !mesh->getBumpMap())
+	if (!mesh->GetTexture() || !mesh->GetBumpMap())
 	{
 		cout << "Initialisation failed...Heightmap texture failed to load." << endl;
 		system("pause");
@@ -20,6 +21,7 @@ HeightMapNode::HeightMapNode(Shader* shader, Vector3& hm_center)
 	nodeShader = shader;
 	deleteMesh = true;
 
+	/* Shader uniform locations. */
 	heightMapTex_loc = nodeShader->GetUniformLocation("rockTex");
 	heights_loc = nodeShader->GetUniformLocation("heights");
 	modelMat_loc = nodeShader->GetUniformLocation("modelMatrix");
@@ -39,6 +41,7 @@ void HeightMapNode::Update(float msec)
 	SceneNode::Update(msec);
 }
 
+/* Set OpenGL state, update shader uniforms, update matrices and draw this node. */
 void HeightMapNode::DrawNode(bool shadowPass)
 {
 	if (mesh)

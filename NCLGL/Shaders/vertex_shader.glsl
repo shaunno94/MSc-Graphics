@@ -1,3 +1,8 @@
+/*
+Author: Shaun Heald
+Basic vertex shader, outputs position * MVP, texture co-ordiante and colour.
+*/
+
 #version 420 core
 
 uniform mat4 MVP;
