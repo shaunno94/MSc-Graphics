@@ -37,6 +37,9 @@
     <Filter Include="GLSL Shaders\Basic_Shaders">
       <UniqueIdentifier>{34a17550-45c3-4fa0-9139-f7547648fad3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GLSL Shaders\Emitter_Shaders">
+      <UniqueIdentifier>{39643d2b-0916-40a6-a80e-25980caebc3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderer.h">
@@ -153,6 +156,12 @@
     </None>
     <None Include="..\Shaders\vertex_shader.glsl">
       <Filter>GLSL Shaders\Basic_Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\emt_geo_shader.glsl">
+      <Filter>GLSL Shaders\Emitter_Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\emt_frag_shader.glsl">
+      <Filter>GLSL Shaders\Emitter_Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

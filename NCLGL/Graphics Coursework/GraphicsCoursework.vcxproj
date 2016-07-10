@@ -100,6 +100,8 @@
     <None Include="..\Shaders\combine_vert_shader.glsl" />
     <None Include="..\Shaders\DFR_frag_shader.glsl" />
     <None Include="..\Shaders\DFR_vert_shader.glsl" />
+    <None Include="..\Shaders\emt_frag_shader.glsl" />
+    <None Include="..\Shaders\emt_geo_shader.glsl" />
     <None Include="..\Shaders\fragment_shader.glsl" />
     <None Include="..\Shaders\HM_frag_shader.glsl" />
     <None Include="..\Shaders\HM_TCS_shader.glsl" />
